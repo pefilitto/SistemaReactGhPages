@@ -5,10 +5,10 @@ import TabelaClientes from "../telascadastro/tabelas/TabelaClientes";
 import TabelaProdutos from "../telascadastro/tabelas/TabelaProdutos";
 import TabelaFornecedores from "../telascadastro/tabelas/TabelaFornecedores";
 import TabelaCategorias from "../telascadastro/tabelas/TabelaCategorias"
-import TelaCadastroCliente from '../telascadastro/ExibeClientesCadastrados';
-import TelaFornecedor from '../telascadastro/ExibeFornecedoresCadastro';
-import TelaProdutos from '../telascadastro/ExibirProdutosCadastrados';
-import TelaCategorias from '../telascadastro/ExibirCategoriasCadastradas';
+import TelaCadastroCliente from '../telascadastro/TelaCadastroCliente';
+import TelaFornecedor from '../telascadastro/TelaFornecedor';
+import TelaProdutos from '../telascadastro/TelaProdutos';
+import TelaCategorias from '../telascadastro/TelaCategorias';
 
 export default function Rotas() {
     return (
