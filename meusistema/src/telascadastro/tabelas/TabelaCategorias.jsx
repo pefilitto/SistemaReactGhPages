@@ -1,7 +1,7 @@
 import { Button, Container, Table } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
-export default function TabelaCategorias(){
+export default function TabelaCategorias(props){
     return(
         <Container>
             <Cabecalho conteudo="Sistema de Gestão Comercial" />
@@ -27,6 +27,7 @@ export default function TabelaCategorias(){
                     </tr>
                 </tbody>
             </Table>
+            <Button style={{ width: "15%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => props.conteudo(true)}>Nova Categoria</Button>
         </Container>
     )
 }

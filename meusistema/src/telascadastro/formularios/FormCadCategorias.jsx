@@ -1,7 +1,7 @@
 import { Container, Form, Row, Col, FloatingLabel, Button } from 'react-bootstrap'
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
-export default function FormCadCategoria() {
+export default function FormCadCategoria(props) {
     return (
         <Container>
             <Cabecalho conteudo="Sistema de Gestão Comercial" />
@@ -42,7 +42,7 @@ export default function FormCadCategoria() {
                     marginTop: "2%"
                 }}>
                     <Button style={{ marginLeft: "1%", width: "10%", marginRight: "10px" }} type="submit" variant={"success"} id='botaoConfirmar'>Cadastrar</Button>
-                    <Button style={{ width: "10%", marginRight: "10px" }} type="button" variant={"secondary"}>Voltar</Button>
+                    <Button style={{ width: "10%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => props.conteudo(false)}>Cadastrados</Button>
                 </Row>
             </Form>
         </Container>

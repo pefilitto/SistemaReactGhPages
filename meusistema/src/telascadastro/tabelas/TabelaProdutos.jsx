@@ -1,7 +1,7 @@
-import { Container, Table } from "react-bootstrap";
+import { Container, Table, Button } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
-export default function TabelaProdutos() {
+export default function TabelaProdutos(props) {
     return (
         <Container>
             <Cabecalho conteudo="Sistema de Gestão Comercial" />
@@ -33,6 +33,7 @@ export default function TabelaProdutos() {
                     </tr>
                 </tbody>
             </Table>
+            <Button style={{ width: "15%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => props.conteudo(true)}>Novo Produto</Button>
         </Container>
     )
 }

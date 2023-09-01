@@ -22,15 +22,6 @@ export default function Menu() {
                             <NavDropdown.Divider />
                             <NavDropdown.Item as={Link} to='/cadastrocategorias'>Categorias</NavDropdown.Item>
                         </NavDropdown>
-                        <NavDropdown title="Consultas" id="basic-nav-dropdown">
-                            <NavDropdown.Item as={Link} to="/tabelaclientes">Clientes</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item as={Link} to='/tabelafornecedores'>Fornecedores</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item as={Link} to='/tabelaprodutos'>Produtos</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item as={Link} to='/tabelacategorias'>Categorias</NavDropdown.Item>
-                        </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
             </Container>
