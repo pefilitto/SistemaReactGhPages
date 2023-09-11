@@ -1,7 +1,54 @@
 import { Container, Form, Row, Col, FloatingLabel, Button } from 'react-bootstrap'
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
+import { useState } from 'react';
 export default function FormCadCliente(props) {
+    //Os atributos desse objeto devem estar associados aos atributos do formulario
+    const [cliente, setCliente] = useState({
+        cpf: '',
+        nome: '',
+        endereco: '',
+        numero: '',
+        bairro: '',
+        cidade: '',
+        uf: '',
+        cep: ''
+    });
+
+    const estadoInicialCliente = {
+        cpf: '',
+        nome: '',
+        endereco: '',
+        numero: '',
+        bairro: '',
+        cidade: '',
+        uf: '',
+        cep: ''
+    }
+    
+    const [formValidado, setFormValidado] = useState(false)
+
+    function manipularMudancas(e){
+        const componente = e.currentTarget;
+        setCliente({...cliente,[componente.name]:componente.value})
+    }
+
+    function manipularSubmissao(e){
+        const form = e.currentTarget;
+        if(form.checkValidity()){
+            //mandar os dados para o backend
+            //limpar os dados do formulario
+            setFormValidado(true);
+            setCliente(estadoInicialCliente);
+            setFormValidado(false);
+        }
+        else{
+            setFormValidado(false);
+        }
+        e.stopPropagation();
+        e.preventDefault();
+    }
+
     return (
         <Container>
             <Cabecalho conteudo="Sistema de Gestão Comercial" />
@@ -13,7 +60,7 @@ export default function FormCadCliente(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>CADASTRO DE CLIENTE</h1>
-            <Form>
+            <Form noValidate validated={formValidado} onSubmit={manipularSubmissao}>
                 <Row>
                     <Col>
                         <Form.Group>
@@ -23,7 +70,14 @@ export default function FormCadCliente(props) {
                                 className="mb-3"
                             >
 
-                                <Form.Control type="text" placeholder="000.000.000-00" id="cpf" name="cpf" required />
+                                <Form.Control 
+                                type="text" 
+                                placeholder="000.000.000-00" 
+                                id="cpf" 
+                                name="cpf"
+                                onChange={manipularMudancas}
+                                value={cliente.cpf} 
+                                required />
                             </FloatingLabel>
                             <Form.Control.Feedback type="invalid">Informe o cpf!</Form.Control.Feedback>
                         </Form.Group>
@@ -37,7 +91,13 @@ export default function FormCadCliente(props) {
                                 label="Nome Completo:"
                                 className="mb-3"
                             >
-                                <Form.Control type="text" placeholder="Informe o nome completo" id="nome" name="nome" required />
+                                <Form.Control 
+                                type="text" placeholder="Informe o nome completo" 
+                                id="nome" 
+                                name="nome"
+                                onChange={manipularMudancas}
+                                value={cliente.nome}
+                                required />
                             </FloatingLabel>
                             <Form.Control.Feedback type="invalid">Informe o nome!</Form.Control.Feedback>
                         </Form.Group>
@@ -51,7 +111,14 @@ export default function FormCadCliente(props) {
                                 label="Endereço:"
                                 className="mb-3"
                             >
-                                <Form.Control type="text" placeholder="Avenida/Rua/Alameda/Viela ..." id="endereco" name="endereco" />
+                                <Form.Control 
+                                type="text" 
+                                placeholder="Avenida/Rua/Alameda/Viela ..." 
+                                id="endereco" 
+                                onChange={manipularMudancas}
+                                value={cliente.endereco}
+                                name="endereco" 
+                                required/>
                             </FloatingLabel>
                             <Form.Control.Feedback type="invalid">Informe o endereço!</Form.Control.Feedback>
                         </Form.Group>
@@ -63,7 +130,14 @@ export default function FormCadCliente(props) {
                                 label="Número"
                                 className="mb-3"
                             >
-                                <Form.Control type="text" placeholder="Nº" id="numero" name="numero" />
+                                <Form.Control 
+                                type="text" 
+                                placeholder="Nº" 
+                                id="numero"
+                                onChange={manipularMudancas}
+                                value={cliente.numero} 
+                                name="numero" 
+                                required/>
                             </FloatingLabel>
                             <Form.Control.Feedback type="invalid">Informe o número!</Form.Control.Feedback>
                         </Form.Group>
@@ -77,7 +151,14 @@ export default function FormCadCliente(props) {
                                 label="Bairro:"
                                 className="mb-3"
                             >
-                                <Form.Control type="text" placeholder="Bairro/Vila..." id="bairro" name="bairro" />
+                                <Form.Control 
+                                type="text" 
+                                placeholder="Bairro/Vila..." 
+                                id="bairro"
+                                onChange={manipularMudancas}
+                                value={cliente.bairro} 
+                                name="bairro" 
+                                required/>
                             </FloatingLabel>
                             <Form.Control.Feedback type="invalid">Informe o bairro!</Form.Control.Feedback>
                         </Form.Group>
@@ -89,14 +170,25 @@ export default function FormCadCliente(props) {
                                 label="Cidade"
                                 className="mb-3"
                             >
-                                <Form.Control type="text" placeholder="Cidade" id="cidade" name="cidade" />
+                                <Form.Control 
+                                type="text" 
+                                placeholder="Cidade" 
+                                id="cidade"
+                                onChange={manipularMudancas}
+                                value={cliente.cidade} 
+                                name="cidade" 
+                                required/>
                             </FloatingLabel>
                             <Form.Control.Feedback type="invalid">Informe a cidade!</Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                     <Col md={3}>
                         <FloatingLabel controlId="floatingSelect" label="UF:">
-                            <Form.Select aria-label="Unidades Federativas brasileiras">
+                            <Form.Select 
+                                aria-label="Unidades Federativas brasileiras"
+                                onChange={manipularMudancas} 
+                                value={cliente.uf}
+                                required>
                                 <option value="SP" selected>São Paulo</option>
                                 <option value="AC">Acre</option>
                                 <option value="AL">Alagoas</option>
@@ -136,14 +228,21 @@ export default function FormCadCliente(props) {
                                 label="CEP:"
                                 className="mb-3"
                             >
-                                <Form.Control type="text" placeholder="Bairro/Vila..." id="bairro" name="bairro" />
+                                <Form.Control 
+                                type="text" 
+                                placeholder="CEP" 
+                                id="cep"
+                                onChange={manipularMudancas}
+                                value={cliente.cep} 
+                                name="cep" 
+                                required/>
                             </FloatingLabel>
                             <Form.Control.Feedback type="invalid">Informe o bairro!</Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                 </Row>
                 <Row>
-                    <Button style={{marginLeft: "1%",width: "10%", marginRight: "10px"}} type="submit" variant={"success"} id='botaoConfirmar'>Cadastrar</Button>
+                    <Button style={{marginLeft: "1%",width: "10%", marginRight: "10px"}} type="submit" variant={"success"} id='botaoConfirmar' onClick={manipularSubmissao}>Cadastrar</Button>
                     <Button style={{width: "10%", marginRight: "10px"}} type="button" variant={"secondary"} onClick={() => props.estado(false)}>Cadastrados</Button>
                 </Row>
             </Form>
