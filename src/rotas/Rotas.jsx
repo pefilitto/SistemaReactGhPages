@@ -10,7 +10,7 @@ export default function Rotas() {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path='/' element={<TelaLogin/>}></Route>
+                <Route path='/' element={<TelaCadastroCliente/>}></Route>
                 <Route path='/cadastroclientes' element={<TelaCadastroCliente />} />
                 <Route path='/cadastrofornecedores' element={<TelaFornecedor />} />
                 <Route path='/cadastrocategorias' element={<TelaCategorias />} />
