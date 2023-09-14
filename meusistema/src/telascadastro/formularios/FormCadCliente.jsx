@@ -29,7 +29,7 @@ export default function FormCadCliente(props) {
         cep: ''
     }
 
-    function preencheCliente(cpf, nome, endereco, numero, bairro, cidade, cep){
+    function preencheCliente(cpf, nome, endereco, numero, bairro, uf, cidade, cep){
         const estadoClientePreenchido = {
             cpf: cpf,
             nome: nome,
@@ -37,7 +37,7 @@ export default function FormCadCliente(props) {
             numero: numero,
             bairro: bairro,
             cidade: cidade,
-            uf: '',
+            uf: uf,
             cep: cep
         }
         return estadoClientePreenchido
@@ -57,9 +57,10 @@ export default function FormCadCliente(props) {
         const numero = document.getElementById('numero').value;
         const bairro = document.getElementById('bairro').value;
         const cidade = document.getElementById('cidade').value;
+        const uf = document.querySelector('#uf').value
         const cep = document.getElementById('cep').value;
 
-        const clientePreenchido = preencheCliente(cpf, nome, endereco, numero, bairro, cidade, cep);
+        const clientePreenchido = preencheCliente(cpf, nome, endereco, numero, bairro, uf, cidade, cep);
 
         if (form.checkValidity()) {
             //mandar os dados para o backend
@@ -213,6 +214,8 @@ export default function FormCadCliente(props) {
                         <FloatingLabel controlId="floatingSelect" label="UF:">
                             <Form.Select
                                 aria-label="Unidades Federativas brasileiras"
+                                id='uf'
+                                name='uf'
                                 onChange={manipularMudancas}
                                 value={cliente.uf}
                                 required>

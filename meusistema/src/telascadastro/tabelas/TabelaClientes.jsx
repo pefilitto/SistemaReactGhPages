@@ -25,15 +25,17 @@ export default function TabelaClientes(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    {listaClientes.map((cliente, index) => (
-                        <tr key={index}>
-                            <td>{cliente.cpf}</td>
-                            <td>{cliente.nome}</td>
-                            <td>{cliente.endereco} / {cliente.numero}</td>
-                            <td>{cliente.cidade}</td>
-                            <td>{cliente.cep}</td>
-                        </tr>
-                    ))}
+                    {
+                        listaClientes.map((cliente, index) => (
+                            <tr key={index}>
+                                <td>{cliente.cpf}</td>
+                                <td>{cliente.nome}</td>
+                                <td>{cliente.endereco} / {cliente.numero}</td>
+                                <td>{cliente.cidade} / {cliente.uf}</td>
+                                <td>{cliente.cep}</td>
+                            </tr>
+                        ))
+                    }
                 </tbody>
             </Table>
 
