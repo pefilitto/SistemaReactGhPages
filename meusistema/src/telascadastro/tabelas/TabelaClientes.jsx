@@ -2,6 +2,7 @@ import { Container, Table, Row, Button } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 export default function TabelaClientes(props) {
+    const { estado, listaClientes } = props;
     return (
         <Container>
             <Cabecalho conteudo="Sistema de Gestão Comercial" />
@@ -24,17 +25,19 @@ export default function TabelaClientes(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>000.000.000-00</td>
-                        <td>Maria Aparecida Fake</td>
-                        <td>Rua das Flores, n° 2569</td>
-                        <td>Presidente Prudente/SP</td>
-                        <td>19015-000</td>
-                    </tr>
+                    {listaClientes.map((cliente, index) => (
+                        <tr key={index}>
+                            <td>{cliente.cpf}</td>
+                            <td>{cliente.nome}</td>
+                            <td>{cliente.endereco} / {cliente.numero}</td>
+                            <td>{cliente.cidade}</td>
+                            <td>{cliente.cep}</td>
+                        </tr>
+                    ))}
                 </tbody>
             </Table>
 
-            <Button style={{ width: "15%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => props.estado(true)}>Novo Cliente</Button>
+            <Button style={{ width: "15%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => estado(true)}>Novo Cliente</Button>
 
         </Container>
     );
