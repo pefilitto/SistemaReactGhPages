@@ -4,7 +4,15 @@ import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 export default function FormCadCliente(props) {
     //Os atributos desse objeto devem estar associados aos atributos do formulario
-    const { estado, listaClientes, setListaClientes } = props;
+    const{ 
+        estado, 
+        listaClientes, 
+        setListaClientes,
+        modoEdicao, 
+        setModoEdicao, 
+        clienteParaEdicao,
+        setClienteParaEdicao 
+    } = props;
     const [formValidado, setFormValidado] = useState(false);
 
     const [cliente, setCliente] = useState({
@@ -65,7 +73,13 @@ export default function FormCadCliente(props) {
         if (form.checkValidity()) {
             //mandar os dados para o backend
             //limpar os dados do formulario
-            setListaClientes([...listaClientes, clientePreenchido]);
+            if(!modoEdicao){
+                setListaClientes([...listaClientes, clientePreenchido]);
+            }
+            else{
+                //Exibir aqui a lista de clientes filtrada
+            }
+            
             setFormValidado(true);
             setCliente(estadoInicialCliente);
             setFormValidado(false);
