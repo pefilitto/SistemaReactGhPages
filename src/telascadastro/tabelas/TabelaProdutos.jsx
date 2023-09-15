@@ -2,6 +2,7 @@ import { Container, Table, Button } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 export default function TabelaProdutos(props) {
+    const { conteudo, listaProdutos } = props;
     return (
         <Container>
             <Cabecalho conteudo="Sistema de Gestão Comercial" />
@@ -24,16 +25,20 @@ export default function TabelaProdutos(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Pincel de Cerdas Macias</td>
-                        <td>R$15,00</td>
-                        <td>1000</td>
-                        <td>Pincel</td>
-                        <td>Pincel com cabo laranjado, cerdas macias e próprio para o uso em paredes</td>
-                    </tr>
+                    {
+                        listaProdutos.map((produto, index) => (
+                            <tr key={index}>
+                                <td>{produto.nome}</td>
+                                <td>{produto.preco}</td>
+                                <td>{produto.qtdEstoque}</td>
+                                <td>{produto.categoria}</td>
+                                <td>{produto.descricao}</td>
+                            </tr>
+                        ))
+                    }
                 </tbody>
             </Table>
-            <Button style={{ width: "15%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => props.conteudo(true)}>Novo Produto</Button>
+            <Button style={{ width: "15%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => conteudo(true)}>Novo Produto</Button>
         </Container>
     )
 }

@@ -1,11 +1,12 @@
 import { Button, Container, Table } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
-export default function TabelaCategorias(props){
-    return(
+export default function TabelaCategorias(props) {
+    const { conteudo, listaCategorias } = props;
+    return (
         <Container>
             <Cabecalho conteudo="Sistema de Gestão Comercial" />
-            <Menu/>
+            <Menu />
             <h1 style={{
                 fontSize: "24px",
                 fontWeight: "bold",
@@ -21,13 +22,17 @@ export default function TabelaCategorias(props){
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Máscara PF1</td>
-                        <td>G</td>
-                    </tr>
+                    {
+                        listaCategorias.map((categoria, index) => (
+                            <tr key={index}>
+                                <td>{categoria.tipoProduto}</td>
+                                <td>{categoria.tamanho}</td>
+                            </tr>
+                        ))
+                    }
                 </tbody>
             </Table>
-            <Button style={{ width: "15%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => props.conteudo(true)}>Nova Categoria</Button>
+            <Button style={{ width: "15%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => conteudo(true)}>Nova Categoria</Button>
         </Container>
     )
 }
