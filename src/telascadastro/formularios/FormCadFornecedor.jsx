@@ -4,18 +4,19 @@ import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 
 export default function FormCadFornecedor(props) {
-    const { conteudo, listaFornecedor, setListaFornecedor } = props;
+    const { conteudo, 
+        listaFornecedor, 
+        setListaFornecedor, 
+        modoEdicao,
+        setModoEdicao, 
+        fornecedorParaEdicao, 
+        setFornecedorParaEdicao
+    } = props;
     const [formValidado, setFormValidado] = useState(false)
-    const [fornecedor, setFornecedor] = useState({
-        cnpj: '',
-        nome: '',
-        endereco: '',
-        numero: '',
-        cidade: '',
-        cep: ''
-    })
+    const estadoInicialFornecedor = fornecedorParaEdicao;
+    const [fornecedor, setFornecedor] = useState(estadoInicialFornecedor);
 
-    const fornecedorInicial = {
+    const fornecedorVazio = {
         cnpj: '',
         nome: '',
         endereco: '',
@@ -54,13 +55,19 @@ export default function FormCadFornecedor(props) {
         const fornecedor = criaFornecedor(cnpj, nome, endereco, numero, cidade, cep);
 
         if (form.checkValidity()) {
-            setFormValidado(true);
-            setListaFornecedor([...listaFornecedor, fornecedor]);
-            setFornecedor(fornecedorInicial);
+            if(!modoEdicao){
+                setListaFornecedor([...listaFornecedor, fornecedor]);
+            }
+            else{
+                setListaFornecedor([...listaFornecedor.filter((itemLista) => itemLista.cnpj !== fornecedor.cnpj), fornecedor]);
+                setModoEdicao(false);
+                setFornecedorParaEdicao(fornecedorVazio)
+            }
+            setFornecedor(fornecedorVazio);
             setFormValidado(false);
         }
         else {
-            setFormValidado(false);
+            setFormValidado(true);
         }
         e.stopPropagation();
         e.preventDefault();

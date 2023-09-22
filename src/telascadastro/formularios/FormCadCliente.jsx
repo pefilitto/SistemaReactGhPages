@@ -14,27 +14,18 @@ export default function FormCadCliente(props) {
         setClienteParaEdicao 
     } = props;
     const [formValidado, setFormValidado] = useState(false);
+    const estadoInicialCliente = clienteParaEdicao;
+    const [cliente, setCliente] = useState(estadoInicialCliente);
 
-    const [cliente, setCliente] = useState({
-        cpf: '',
-        nome: '',
-        endereco: '',
-        numero: '',
-        bairro: '',
-        cidade: '',
-        uf: '',
-        cep: ''
-    });
-
-    const estadoInicialCliente = {
-        cpf: '',
-        nome: '',
-        endereco: '',
-        numero: '',
-        bairro: '',
-        cidade: '',
-        uf: '',
-        cep: ''
+    const clienteVazio = {
+        cpf:'',
+        nome:'',
+        endereco:'',
+        numero:'',
+        bairro:'',
+        cidade:'',
+        uf:'SP',
+        cep:''
     }
 
     function preencheCliente(cpf, nome, endereco, numero, bairro, uf, cidade, cep){
@@ -78,14 +69,15 @@ export default function FormCadCliente(props) {
             }
             else{
                 //Exibir aqui a lista de clientes filtrada
+                setListaClientes([...listaClientes.filter((itemCliente) => itemCliente.cpf  !== cliente.cpf), cliente]);
+                setModoEdicao(false);
+                setClienteParaEdicao(clienteVazio)
             }
-            
-            setFormValidado(true);
-            setCliente(estadoInicialCliente);
+            setCliente(clienteVazio);
             setFormValidado(false);
         }
         else {
-            setFormValidado(false);
+            setFormValidado(true);
         }
         e.stopPropagation();
         e.preventDefault();

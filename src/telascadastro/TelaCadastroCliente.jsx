@@ -35,9 +35,7 @@ export default function TelaCadastroCliente() {
                     estado={setExibirFormulario}
                     listaClientes={listaClientes}
                     setListaClientes={setListaClientes}
-                    modoEdicao={modoEdicao}
                     setModoEdicao={setModoEdicao}
-                    clienteParaEdicao={clienteParaEdicao}
                     setClienteParaEdicao={setClienteParaEdicao}
                 />
             )}
