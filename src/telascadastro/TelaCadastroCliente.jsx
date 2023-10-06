@@ -6,16 +6,7 @@ import { useState } from "react";
 export default function TelaCadastroCliente() {
     const [exibirFormulario, setExibirFormulario] = useState(true);
     const [listaClientes, setListaClientes] = useState([]);
-    const [clienteParaEdicao, setClienteParaEdicao] = useState({
-        cpf: '',
-        nome: '',
-        endereco: '',
-        numero: '',
-        bairro: '',
-        cidade: '',
-        uf: '',
-        cep: ''
-    })
+    const [clienteParaEdicao, setClienteParaEdicao] = useState({})
     const [modoEdicao, setModoEdicao] = useState(false);
 
     return (

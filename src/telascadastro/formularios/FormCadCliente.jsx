@@ -4,31 +4,32 @@ import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 export default function FormCadCliente(props) {
     //Os atributos desse objeto devem estar associados aos atributos do formulario
-    const{ 
-        estado, 
-        listaClientes, 
+    const {
+        estado,
+        listaClientes,
         setListaClientes,
-        modoEdicao, 
-        setModoEdicao, 
+        modoEdicao,
+        setModoEdicao,
         clienteParaEdicao,
-        setClienteParaEdicao 
+        setClienteParaEdicao,
     } = props;
     const [formValidado, setFormValidado] = useState(false);
     const estadoInicialCliente = clienteParaEdicao;
     const [cliente, setCliente] = useState(estadoInicialCliente);
+    //const [listaLocalStorage, setListaLocalStorage] = useState([])
 
     const clienteVazio = {
-        cpf:'',
-        nome:'',
-        endereco:'',
-        numero:'',
-        bairro:'',
-        cidade:'',
-        uf:'SP',
-        cep:''
+        cpf: '',
+        nome: '',
+        endereco: '',
+        numero: '',
+        bairro: '',
+        cidade: '',
+        uf: 'SP',
+        cep: ''
     }
 
-    function preencheCliente(cpf, nome, endereco, numero, bairro, uf, cidade, cep){
+    function preencheCliente(cpf, nome, endereco, numero, bairro, uf, cidade, cep) {
         const estadoClientePreenchido = {
             cpf: cpf,
             nome: nome,
@@ -59,25 +60,34 @@ export default function FormCadCliente(props) {
         const uf = document.querySelector('#uf').value
         const cep = document.getElementById('cep').value;
 
-        const clientePreenchido = preencheCliente(cpf, nome, endereco, numero, bairro, uf, cidade, cep);
+        if (cpf && nome && endereco && numero && bairro && cidade && uf && cep) {
+            const clientePreenchido = preencheCliente(cpf, nome, endereco, numero, bairro, uf, cidade, cep);
 
-        if (form.checkValidity()) {
-            //mandar os dados para o backend
-            //limpar os dados do formulario
-            if(!modoEdicao){
-                setListaClientes([...listaClientes, clientePreenchido]);
+            if (form.checkValidity()) {
+                //mandar os dados para o backend
+                //limpar os dados do formulario
+                if (!modoEdicao) {
+                    setListaClientes([...listaClientes, clientePreenchido]);
+                    //Caso quisesse salvar em localStorage
+                    //setListaLocalStorage(() => {
+                    //    localStorage.setItem("clientes",JSON.stringify ([...listaLocalStorage, clientePreenchido]));
+                    //})
+                }
+                else {
+                    //Exibir aqui a lista de clientes filtrada
+                    setListaClientes([...listaClientes.filter((itemCliente) => itemCliente.cpf !== cliente.cpf), cliente]);
+                    setModoEdicao(false);
+                    setClienteParaEdicao(clienteVazio);
+                }
+                setCliente(clienteVazio);
+                setFormValidado(false);
             }
-            else{
-                //Exibir aqui a lista de clientes filtrada
-                setListaClientes([...listaClientes.filter((itemCliente) => itemCliente.cpf  !== cliente.cpf), cliente]);
-                setModoEdicao(false);
-                setClienteParaEdicao(clienteVazio)
+            else {
+                setFormValidado(true);
             }
-            setCliente(clienteVazio);
-            setFormValidado(false);
         }
-        else {
-            setFormValidado(true);
+        else{
+            //Colocar aqui o alert de preencher todos os campos
         }
         e.stopPropagation();
         e.preventDefault();

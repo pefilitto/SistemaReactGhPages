@@ -6,15 +6,7 @@ import { useState } from "react";
 export default function TelaFornecedor() {
     const [exibirFornecedor, setExibirFornecedor] = useState(true)
     const [listaFornecedor, setListaFornecedor] = useState([]);
-    const [fornecedorParaEdicao, setFornecedorParaEdicao] = useState({
-        cnpj: '',
-        nome: '',
-        endereco: '',
-        numero: '',
-        cidade: '',
-        cep: ''
-    })
-
+    const [fornecedorParaEdicao, setFornecedorParaEdicao] = useState({})
     const [modoEdicao, setModoEdicao] = useState(false);
     return (
         <Container>
