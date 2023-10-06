@@ -3,17 +3,20 @@ import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 export default function FormCadProdutos(props) {
-    const { conteudo, listaProdutos, setListaProdutos } = props;
+    const {
+        conteudo,
+        listaProdutos,
+        setListaProdutos,
+        modoEdicao,
+        setModoEdicao,
+        produtoParaEdicao,
+        setProdutoParaEdicao
+    } = props;
     const [formValidado, setFormValidado] = useState(false);
-    const [produto, setProduto] = useState({
-        nome: '',
-        preco: '',
-        qtdEstoque: '',
-        categoria: '',
-        descricao: ''
-    })
+    const estadoInicialProduto = produtoParaEdicao;
+    const [produto, setProduto] = useState(estadoInicialProduto)
 
-    const produtoInicial = {
+    const produtoVazio = {
         nome: '',
         preco: '',
         qtdEstoque: '',
@@ -21,7 +24,12 @@ export default function FormCadProdutos(props) {
         descricao: ''
     }
 
-    function criaProduto(nome, preco, qtdEstoque, categoria, descricao){
+    function manipularMudancas(e) {
+        const componente = e.currentTarget;
+        setProduto({ ...produto, [componente.name]: componente.value })
+    }
+
+    function criaProduto(nome, preco, qtdEstoque, categoria, descricao) {
         const produtoInserido = {
             nome: nome,
             preco: preco,
@@ -32,12 +40,12 @@ export default function FormCadProdutos(props) {
         return produtoInserido;
     }
 
-    function manipularMudancas(e){
+    function manipularMudancas(e) {
         const componente = e.currentTarget;
-        setProduto({...produto, [componente.name] : componente.value})
+        setProduto({ ...produto, [componente.name]: componente.value })
     }
 
-    function manipularSubmissao(e){
+    function manipularSubmissao(e) {
         const form = e.currentTarget;
 
         const nome = document.getElementById('nome').value;
@@ -46,16 +54,27 @@ export default function FormCadProdutos(props) {
         const categoria = document.getElementById('categoria').value;
         const descricao = document.getElementById('descricao').value;
 
-        const produto = criaProduto(nome, preco, qtdEstoque, categoria, descricao);
+        if (nome && preco && qtdEstoque && categoria && descricao) {
+            const produto = criaProduto(nome, preco, qtdEstoque, categoria, descricao);
 
-        if(form.checkValidity()){
-            setFormValidado(true);
-            setListaProdutos([...listaProdutos, produto])
-            setProduto(produtoInicial);
-            setFormValidado(false);
+            if (form.checkValidity()) {
+                if (!modoEdicao) {
+                    setListaProdutos([...listaProdutos, produto])
+                }
+                else {
+                    setListaProdutos([...listaProdutos.filter((item) => item.nome !== produto.nome), produto])
+                    setModoEdicao(false);
+                    setProdutoParaEdicao(produtoVazio)
+                }
+                setProduto(produtoVazio);
+                setFormValidado(false);
+            }
+            else {
+                setFormValidado(true);
+            }
         }
         else{
-            setFormValidado(false);
+            //Colocar aqui o alert de preencher todos os campos
         }
         e.stopPropagation();
         e.preventDefault();
@@ -63,7 +82,7 @@ export default function FormCadProdutos(props) {
     return (
         <Container>
             <Cabecalho conteudo="Sistema de Gestão Comercial" />
-            <Menu/>
+            <Menu />
             <h1 style={{
                 fontSize: "24px",
                 fontWeight: "bold",
@@ -126,7 +145,7 @@ export default function FormCadProdutos(props) {
                             <Form.Control.Feedback type="invalid">Informe a categoria!</Form.Control.Feedback>
                         </Form.Group>
                     </Col>
-                </Row>  
+                </Row>
                 <Row>
                     <Col md={15}>
                         <Form.Group>
@@ -142,8 +161,8 @@ export default function FormCadProdutos(props) {
                     </Col>
                 </Row>
                 <Row>
-                    <Button style={{marginLeft: "1%",width: "10%", marginRight: "10px"}} type="submit" variant={"success"} id='botaoConfirmar'>Cadastrar</Button>
-                    <Button style={{width: "10%", marginRight: "10px"}} type="button" variant={"secondary"} onClick={() => conteudo(false)}>Cadastrados</Button>
+                    <Button style={{ marginLeft: "1%", width: "10%", marginRight: "10px" }} type="submit" variant={"success"} id='botaoConfirmar'>Cadastrar</Button>
+                    <Button style={{ width: "10%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => conteudo(false)}>Cadastrados</Button>
                 </Row>
             </Form>
         </Container>

@@ -4,18 +4,20 @@ import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 
 export default function FormCadFornecedor(props) {
-    const { conteudo, listaFornecedor, setListaFornecedor } = props;
+    const {
+        conteudo,
+        listaFornecedor,
+        setListaFornecedor,
+        modoEdicao,
+        setModoEdicao,
+        fornecedorParaEdicao,
+        setFornecedorParaEdicao
+    } = props;
     const [formValidado, setFormValidado] = useState(false)
-    const [fornecedor, setFornecedor] = useState({
-        cnpj: '',
-        nome: '',
-        endereco: '',
-        numero: '',
-        cidade: '',
-        cep: ''
-    })
+    const estadoInicialFornecedor = fornecedorParaEdicao;
+    const [fornecedor, setFornecedor] = useState(estadoInicialFornecedor);
 
-    const fornecedorInicial = {
+    const fornecedorVazio = {
         cnpj: '',
         nome: '',
         endereco: '',
@@ -24,9 +26,9 @@ export default function FormCadFornecedor(props) {
         cep: ''
     }
 
-    function manipularMudancas(e){
+    function manipularMudancas(e) {
         const componente = e.currentTarget;
-        setFornecedor({...fornecedor, [componente.name]:componente.value})
+        setFornecedor({ ...fornecedor, [componente.name]: componente.value })
     }
 
     function criaFornecedor(cnpj, nome, endereco, numero, cidade, cep) {
@@ -51,16 +53,27 @@ export default function FormCadFornecedor(props) {
         const cidade = document.getElementById('cidade').value
         const cep = document.getElementById('cep').value
 
-        const fornecedor = criaFornecedor(cnpj, nome, endereco, numero, cidade, cep);
+        if (cnpj && nome && endereco && numero && cidade && cep) {
+            const fornecedor = criaFornecedor(cnpj, nome, endereco, numero, cidade, cep);
 
-        if (form.checkValidity()) {
-            setFormValidado(true);
-            setListaFornecedor([...listaFornecedor, fornecedor]);
-            setFornecedor(fornecedorInicial);
-            setFormValidado(false);
+            if (form.checkValidity()) {
+                if (!modoEdicao) {
+                    setListaFornecedor([...listaFornecedor, fornecedor]);
+                }
+                else {
+                    setListaFornecedor([...listaFornecedor.filter((itemLista) => itemLista.cnpj !== fornecedor.cnpj), fornecedor]);
+                    setModoEdicao(false);
+                    setFornecedorParaEdicao(fornecedorVazio)
+                }
+                setFornecedor(fornecedorVazio);
+                setFormValidado(false);
+            }
+            else {
+                setFormValidado(true);
+            }
         }
-        else {
-            setFormValidado(false);
+        else{
+            //Colocar aqui o alert de preencher todos os campos
         }
         e.stopPropagation();
         e.preventDefault();

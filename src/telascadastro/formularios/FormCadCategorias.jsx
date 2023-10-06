@@ -1,22 +1,28 @@
-import { Container, Form, Row, Col, FloatingLabel, Button } from 'react-bootstrap'
+import { Container, Form, Row, Col, FloatingLabel, Button, Alert } from 'react-bootstrap'
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
+
 export default function FormCadCategoria(props) {
-    const { conteudo, listaCategorias, setListaCategorias } = props;
+    const {
+        conteudo,
+        listaCategorias,
+        setListaCategorias,
+        modoEdicao,
+        setModoEdicao,
+        categoriaParaEdicao,
+        setCategoriaParaEdicao,
+    } = props;
+
     const [formValidado, setFormValidado] = useState(false);
-
-    const [categoria, setCategoria] = useState({
-        tipoProduto: '',
-        tamanho: ''
-    })
-
-    const categoriaInicial = {
+    const estadoCategoriaInicial = categoriaParaEdicao;
+    const [categoria, setCategoria] = useState(estadoCategoriaInicial);
+    const categoriaVazia = {
         tipoProduto: '',
         tamanho: ''
     }
 
-    function insereCategoria(tipo, tamanho){
+    function insereCategoria(tipo, tamanho) {
         const novaCategoria = {
             tipoProduto: tipo,
             tamanho: tamanho
@@ -24,27 +30,33 @@ export default function FormCadCategoria(props) {
         return novaCategoria;
     }
 
-    function manipularMudancas(e){
+    function manipularMudancas(e) {
         const componente = e.currentTarget;
-        setCategoria({...categoria, [componente.name]:componente.value})
+        setCategoria({ ...categoria, [componente.name]: componente.value })
     }
 
-    function manipularSubmissao(e){
+    function manipularSubmissao(e) {
         const form = e.currentTarget;
 
         const tipo = document.querySelector('#tipoProduto').value;
         const tamanho = document.querySelector('#tamanho').value;
 
         const categoria = insereCategoria(tipo, tamanho);
-
-        if(form.checkValidity()){
-            setFormValidado(true);
-            setListaCategorias([...listaCategorias, categoria]);
-            setCategoria(categoriaInicial);
+        
+        if (form.checkValidity()) {
+            if (!modoEdicao) {
+                setListaCategorias([...listaCategorias, categoria]);
+            }
+            else {
+                setListaCategorias([...listaCategorias.filter((item) => item.tipoProduto !== categoria.tipoProduto), categoria]);
+                setModoEdicao(false);
+                setCategoriaParaEdicao(categoriaVazia)
+            }
+            setCategoria(categoriaVazia);
             setFormValidado(false);
         }
-        else{
-            setFormValidado(false);
+        else {
+            setFormValidado(true);
         }
         e.stopPropagation();
         e.preventDefault();
