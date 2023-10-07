@@ -2,6 +2,7 @@ import { Container, Form, Row, Col, FloatingLabel, Button } from 'react-bootstra
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
+import { Alert } from 'react-bootstrap';
 export default function FormCadProdutos(props) {
     const {
         conteudo,
@@ -14,7 +15,11 @@ export default function FormCadProdutos(props) {
     } = props;
     const [formValidado, setFormValidado] = useState(false);
     const estadoInicialProduto = produtoParaEdicao;
-    const [produto, setProduto] = useState(estadoInicialProduto)
+    const [produto, setProduto] = useState(estadoInicialProduto);
+    const [mostrarAlertSucesso, setMostrarAlertSucesso] = useState(false);
+    const [mostrarAlertErro, setMostrarAlertErro] = useState(false);
+    const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
+    const [alertProdutoCadastrado, setAlertProdutoCadastrado] = useState(false);
 
     const produtoVazio = {
         nome: '',
@@ -40,6 +45,10 @@ export default function FormCadProdutos(props) {
         return produtoInserido;
     }
 
+    function buscaProduto(listaProdutos, nome) {
+        return listaProdutos.find((element) => element.nome === nome) !== undefined;
+    }
+
     function manipularMudancas(e) {
         const componente = e.currentTarget;
         setProduto({ ...produto, [componente.name]: componente.value })
@@ -57,12 +66,24 @@ export default function FormCadProdutos(props) {
         if (nome && preco && qtdEstoque && categoria && descricao) {
             const produto = criaProduto(nome, preco, qtdEstoque, categoria, descricao);
 
+
             if (form.checkValidity()) {
                 if (!modoEdicao) {
-                    setListaProdutos([...listaProdutos, produto])
+                    if (!buscaProduto(listaProdutos, nome)) {
+                        setListaProdutos([...listaProdutos, produto]);
+                        setMostrarAlertSucesso(true)
+                        setTimeout(() => setMostrarAlertSucesso(false), 3000)
+                    }
+                    else {
+                        setAlertProdutoCadastrado(true);
+                        setProduto(produtoVazio);
+                        setTimeout(() => setAlertProdutoCadastrado(false), 3000)
+                    }
                 }
                 else {
-                    setListaProdutos([...listaProdutos.filter((item) => item.nome !== produto.nome), produto])
+                    setListaProdutos([...listaProdutos.filter((item) => item.nome !== produto.nome), produto]);
+                    setMostrarAlertEdicao(true);
+                    setTimeout(() => setMostrarAlertEdicao(false), 3000)
                     setModoEdicao(false);
                     setProdutoParaEdicao(produtoVazio)
                 }
@@ -73,8 +94,9 @@ export default function FormCadProdutos(props) {
                 setFormValidado(true);
             }
         }
-        else{
-            //Colocar aqui o alert de preencher todos os campos
+        else {
+            setMostrarAlertErro(true);
+            setTimeout(() => setMostrarAlertErro(false), 3000)
         }
         e.stopPropagation();
         e.preventDefault();
@@ -90,6 +112,26 @@ export default function FormCadProdutos(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>CADASTRO DE PRODUTOS</h1>
+            {mostrarAlertSucesso && (
+                <Alert variant="success">
+                    Produto cadastrado com sucesso!
+                </Alert>
+            )}
+            {mostrarAlertErro && (
+                <Alert variant="danger">
+                    Erro: Preencha todos os campos!
+                </Alert>
+            )}
+            {mostrarAlertEdicao && (
+                <Alert variant="success">
+                    Produto editado com sucesso!
+                </Alert>
+            )}
+            {alertProdutoCadastrado && (
+                <Alert variant='warning'>
+                    Ops... produto já cadastrado!
+                </Alert>
+            )}
             <Form noValidate validated={formValidado} onSubmit={manipularSubmissao}>
                 <Row>
                     <Col>

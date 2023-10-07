@@ -2,6 +2,7 @@ import { Container, Form, Row, Col, FloatingLabel, Button } from 'react-bootstra
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
+import { Alert } from 'react-bootstrap';
 export default function FormCadCliente(props) {
     //Os atributos desse objeto devem estar associados aos atributos do formulario
     const {
@@ -16,6 +17,10 @@ export default function FormCadCliente(props) {
     const [formValidado, setFormValidado] = useState(false);
     const estadoInicialCliente = clienteParaEdicao;
     const [cliente, setCliente] = useState(estadoInicialCliente);
+    const [mostrarAlertSucesso, setMostrarAlertSucesso] = useState(false);
+    const [mostrarAlertErro, setMostrarAlertErro] = useState(false);
+    const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
+    const [alertClienteCadastrado, setAlertClienteCadastrado] = useState(false);
     //const [listaLocalStorage, setListaLocalStorage] = useState([])
 
     const clienteVazio = {
@@ -48,6 +53,11 @@ export default function FormCadCliente(props) {
         setCliente({ ...cliente, [componente.name]: componente.value })
     }
 
+    function buscaCliente(listaClientes, cpf) {
+        return listaClientes.find((element) => element.cpf === cpf) !== undefined;
+    }
+
+
     function manipularSubmissao(e) {
         const form = e.currentTarget;
 
@@ -67,15 +77,22 @@ export default function FormCadCliente(props) {
                 //mandar os dados para o backend
                 //limpar os dados do formulario
                 if (!modoEdicao) {
-                    setListaClientes([...listaClientes, clientePreenchido]);
-                    //Caso quisesse salvar em localStorage
-                    //setListaLocalStorage(() => {
-                    //    localStorage.setItem("clientes",JSON.stringify ([...listaLocalStorage, clientePreenchido]));
-                    //})
+                    if (!buscaCliente(listaClientes, cpf)) {
+                        setListaClientes([...listaClientes, clientePreenchido]);
+                        setMostrarAlertSucesso(true)
+                        setTimeout(() => setMostrarAlertSucesso(false), 3000)
+                    }
+                    else {
+                        setAlertClienteCadastrado(true);
+                        setCliente(clienteVazio);
+                        setTimeout(() => setAlertClienteCadastrado(false), 3000)
+                    }
                 }
                 else {
                     //Exibir aqui a lista de clientes filtrada
                     setListaClientes([...listaClientes.filter((itemCliente) => itemCliente.cpf !== cliente.cpf), cliente]);
+                    setMostrarAlertEdicao(true);
+                    setTimeout(() => setMostrarAlertEdicao(false), 3000)
                     setModoEdicao(false);
                     setClienteParaEdicao(clienteVazio);
                 }
@@ -86,8 +103,10 @@ export default function FormCadCliente(props) {
                 setFormValidado(true);
             }
         }
-        else{
-            //Colocar aqui o alert de preencher todos os campos
+        else {
+            setMostrarAlertErro(true);
+            setCliente(clienteVazio);
+            setTimeout(() => setMostrarAlertErro(false), 3000)
         }
         e.stopPropagation();
         e.preventDefault();
@@ -104,6 +123,26 @@ export default function FormCadCliente(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>CADASTRO DE CLIENTE</h1>
+            {mostrarAlertSucesso && (
+                <Alert variant="success">
+                    Cliente cadastrado com sucesso!
+                </Alert>
+            )}
+            {mostrarAlertErro && (
+                <Alert variant="danger">
+                    Erro: Preencha todos os campos!
+                </Alert>
+            )}
+            {mostrarAlertEdicao && (
+                <Alert variant="success">
+                    Cliente editado com sucesso!
+                </Alert>
+            )}
+            {alertClienteCadastrado && (
+                <Alert variant='warning'>
+                    Ops... cliente já cadastrado!
+                </Alert>
+            )}
             <Form noValidate validated={formValidado} onSubmit={manipularSubmissao}>
                 <Row>
                     <Col>
@@ -288,7 +327,7 @@ export default function FormCadCliente(props) {
                     </Col>
                 </Row>
                 <Row>
-                    <Button style={{ marginLeft: "1%", width: "10%", marginRight: "10px" }} type="submit" variant={"success"} id='botaoConfirmar' onClick={manipularSubmissao}>Cadastrar</Button>
+                    <Button style={{ marginLeft: "1%", width: "10%", marginRight: "10px" }} type="submit" variant={"success"} id='botaoConfirmar'>Cadastrar</Button>
                     <Button style={{ width: "10%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => estado(false)}>Cadastrados</Button>
                 </Row>
             </Form>

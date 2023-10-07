@@ -1,8 +1,7 @@
 import { Container, Form, Row, Col, FloatingLabel, Button, Alert } from 'react-bootstrap'
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
-import { useState } from 'react';
-
+import { useEffect, useState } from 'react';
 export default function FormCadCategoria(props) {
     const {
         conteudo,
@@ -17,6 +16,10 @@ export default function FormCadCategoria(props) {
     const [formValidado, setFormValidado] = useState(false);
     const estadoCategoriaInicial = categoriaParaEdicao;
     const [categoria, setCategoria] = useState(estadoCategoriaInicial);
+    const [mostrarAlertSucesso, setMostrarAlertSucesso] = useState(false);
+    const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
+    const [alertCategoriaCadastrada, setAlertCategoriaCadastrada] = useState(false);
+
     const categoriaVazia = {
         tipoProduto: '',
         tamanho: ''
@@ -35,6 +38,10 @@ export default function FormCadCategoria(props) {
         setCategoria({ ...categoria, [componente.name]: componente.value })
     }
 
+    function buscaCategoria(listaCategorias, tipo, tamanho) {
+        return listaCategorias.find((element) => element.tipoProduto === tipo && element.tamanho === tamanho) !== undefined;
+    }
+
     function manipularSubmissao(e) {
         const form = e.currentTarget;
 
@@ -42,13 +49,24 @@ export default function FormCadCategoria(props) {
         const tamanho = document.querySelector('#tamanho').value;
 
         const categoria = insereCategoria(tipo, tamanho);
-        
+
         if (form.checkValidity()) {
             if (!modoEdicao) {
-                setListaCategorias([...listaCategorias, categoria]);
+                if (!buscaCategoria(listaCategorias, tipo, tamanho)) {
+                    setListaCategorias([...listaCategorias, categoria]);
+                    setMostrarAlertSucesso(true);
+                    setTimeout(() => setMostrarAlertSucesso(false), 3000);
+                }
+                else {
+                    setAlertCategoriaCadastrada(true);
+                    setCategoria(categoriaVazia)
+                    setTimeout(() => setAlertCategoriaCadastrada(false), 3000);
+                }
             }
             else {
                 setListaCategorias([...listaCategorias.filter((item) => item.tipoProduto !== categoria.tipoProduto), categoria]);
+                setMostrarAlertEdicao(true);
+                setTimeout(() => setMostrarAlertEdicao(false), 3000);
                 setModoEdicao(false);
                 setCategoriaParaEdicao(categoriaVazia)
             }
@@ -72,6 +90,21 @@ export default function FormCadCategoria(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>CADASTRO DE CATEGORIAS</h1>
+            {mostrarAlertSucesso && (
+                <Alert variant="success">
+                    Categoria cadastrada com sucesso!
+                </Alert>
+            )}
+            {mostrarAlertEdicao && (
+                <Alert variant="success">
+                    Categoria editada com sucesso!
+                </Alert>
+            )}
+            {alertCategoriaCadastrada && (
+                <Alert variant='warning'>
+                    Ops... categoria já cadastrada!
+                </Alert>
+            )}
             <Form noValidate validated={formValidado} onSubmit={manipularSubmissao}>
                 <Row>
                     <Col>
