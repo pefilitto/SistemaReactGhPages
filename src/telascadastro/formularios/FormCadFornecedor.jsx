@@ -2,7 +2,7 @@ import { Container, Form, Row, Col, FloatingLabel, Button } from 'react-bootstra
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
-
+import { Alert } from 'react-bootstrap';
 export default function FormCadFornecedor(props) {
     const {
         conteudo,
@@ -16,6 +16,10 @@ export default function FormCadFornecedor(props) {
     const [formValidado, setFormValidado] = useState(false)
     const estadoInicialFornecedor = fornecedorParaEdicao;
     const [fornecedor, setFornecedor] = useState(estadoInicialFornecedor);
+    const [mostrarAlertSucesso, setMostrarAlertSucesso] = useState(false);
+    const [mostrarAlertErro, setMostrarAlertErro] = useState(false);
+    const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
+    const [alertFornecedorCadastrado, setAlertFornecedorCadastrado] = useState(false);
 
     const fornecedorVazio = {
         cnpj: '',
@@ -43,6 +47,10 @@ export default function FormCadFornecedor(props) {
         return fornecedorInserido
     }
 
+    function buscaFornecedor(listaFornecedor, cnpj) {
+        return listaFornecedor.find((element) => element.cnpj === cnpj) !== undefined
+    }
+
     function manipularSubmissao(e) {
         const form = e.currentTarget
 
@@ -58,10 +66,21 @@ export default function FormCadFornecedor(props) {
 
             if (form.checkValidity()) {
                 if (!modoEdicao) {
-                    setListaFornecedor([...listaFornecedor, fornecedor]);
+                    if (!buscaFornecedor(listaFornecedor, cnpj)) {
+                        setListaFornecedor([...listaFornecedor, fornecedor]);
+                        setMostrarAlertSucesso(true)
+                        setTimeout(() => setMostrarAlertSucesso(false), 3000)
+                    }
+                    else {
+                        setAlertFornecedorCadastrado(true);
+                        setFornecedor(fornecedorVazio);
+                        setTimeout(() => setAlertFornecedorCadastrado(false), 3000)
+                    }
                 }
                 else {
                     setListaFornecedor([...listaFornecedor.filter((itemLista) => itemLista.cnpj !== fornecedor.cnpj), fornecedor]);
+                    setMostrarAlertEdicao(true);
+                    setTimeout(() => setMostrarAlertEdicao(false), 3000)
                     setModoEdicao(false);
                     setFornecedorParaEdicao(fornecedorVazio)
                 }
@@ -72,8 +91,10 @@ export default function FormCadFornecedor(props) {
                 setFormValidado(true);
             }
         }
-        else{
-            //Colocar aqui o alert de preencher todos os campos
+        else {
+            setMostrarAlertErro(true);
+            setFornecedor(fornecedorVazio);
+            setTimeout(() => setMostrarAlertErro(false), 3000)
         }
         e.stopPropagation();
         e.preventDefault();
@@ -91,6 +112,26 @@ export default function FormCadFornecedor(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>CADASTRO DE FORNECEDORES</h1>
+            {mostrarAlertSucesso && (
+                <Alert variant="success">
+                    Fornecedor cadastrado com sucesso!
+                </Alert>
+            )}
+            {mostrarAlertErro && (
+                <Alert variant="danger">
+                    Erro: Preencha todos os campos!
+                </Alert>
+            )}
+            {mostrarAlertEdicao && (
+                <Alert variant="success">
+                    Fornecedor editado com sucesso!
+                </Alert>
+            )}
+            {alertFornecedorCadastrado && (
+                <Alert variant='warning'>
+                    Ops... fornecedor já cadastrado!
+                </Alert>
+            )}
             <Form noValidate validated={formValidado} onSubmit={manipularSubmissao}>
                 <Row>
                     <Col>
