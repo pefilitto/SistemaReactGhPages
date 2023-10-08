@@ -80,19 +80,19 @@ export default function FormCadCliente(props) {
                     if (!buscaCliente(listaClientes, cpf)) {
                         setListaClientes([...listaClientes, clientePreenchido]);
                         setMostrarAlertSucesso(true)
-                        setTimeout(() => setMostrarAlertSucesso(false), 3000)
+                        setTimeout(() => setMostrarAlertSucesso(false), 2000)
                     }
                     else {
                         setAlertClienteCadastrado(true);
                         setCliente(clienteVazio);
-                        setTimeout(() => setAlertClienteCadastrado(false), 3000)
+                        setTimeout(() => setAlertClienteCadastrado(false), 2000)
                     }
                 }
                 else {
                     //Exibir aqui a lista de clientes filtrada
                     setListaClientes([...listaClientes.filter((itemCliente) => itemCliente.cpf !== cliente.cpf), cliente]);
                     setMostrarAlertEdicao(true);
-                    setTimeout(() => setMostrarAlertEdicao(false), 3000)
+                    setTimeout(() => setMostrarAlertEdicao(false), 2000)
                     setModoEdicao(false);
                     setClienteParaEdicao(clienteVazio);
                 }
@@ -106,7 +106,7 @@ export default function FormCadCliente(props) {
         else {
             setMostrarAlertErro(true);
             setCliente(clienteVazio);
-            setTimeout(() => setMostrarAlertErro(false), 3000)
+            setTimeout(() => setMostrarAlertErro(false), 2000)
         }
         e.stopPropagation();
         e.preventDefault();

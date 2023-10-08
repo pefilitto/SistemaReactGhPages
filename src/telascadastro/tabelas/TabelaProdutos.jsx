@@ -1,9 +1,10 @@
-import { Container, Table, Button } from "react-bootstrap";
+import { Container, Table, Button, Alert } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
+import { useState } from "react";
 export default function TabelaProdutos(props) {
     const { conteudo, listaProdutos, setListaProdutos, setModoEdicao, modoEdicao, produtoParaEdicao, setProdutoParaEdicao} = props;
-
+    const [exibirMensagem, setExibirMensagem] = useState(false);
     function editarProduto(produto){
         setModoEdicao(true);
         setProdutoParaEdicao(produto);
@@ -14,7 +15,9 @@ export default function TabelaProdutos(props) {
         if(confirm("Deseja realmente excluir esse produto?")){
             setListaProdutos(
                 listaProdutos.filter((item => item.nome !== produto.nome))
-            )
+            );
+            setExibirMensagem(true);
+            setTimeout(() => setExibirMensagem(false), 2000);
         }
     }
     return (
@@ -28,6 +31,13 @@ export default function TabelaProdutos(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>PRODUTOS CADASTRADOS</h1>
+            {
+                exibirMensagem && (
+                    <Alert variant="danger">
+                        Produto excluído com sucesso!
+                    </Alert>
+                )
+            }
             <Table striped bordered hover>
                 <thead>
                     <tr>

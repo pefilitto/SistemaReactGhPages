@@ -69,18 +69,18 @@ export default function FormCadFornecedor(props) {
                     if (!buscaFornecedor(listaFornecedor, cnpj)) {
                         setListaFornecedor([...listaFornecedor, fornecedor]);
                         setMostrarAlertSucesso(true)
-                        setTimeout(() => setMostrarAlertSucesso(false), 3000)
+                        setTimeout(() => setMostrarAlertSucesso(false), 2000)
                     }
                     else {
                         setAlertFornecedorCadastrado(true);
                         setFornecedor(fornecedorVazio);
-                        setTimeout(() => setAlertFornecedorCadastrado(false), 3000)
+                        setTimeout(() => setAlertFornecedorCadastrado(false), 2000)
                     }
                 }
                 else {
                     setListaFornecedor([...listaFornecedor.filter((itemLista) => itemLista.cnpj !== fornecedor.cnpj), fornecedor]);
                     setMostrarAlertEdicao(true);
-                    setTimeout(() => setMostrarAlertEdicao(false), 3000)
+                    setTimeout(() => setMostrarAlertEdicao(false), 2000)
                     setModoEdicao(false);
                     setFornecedorParaEdicao(fornecedorVazio)
                 }
@@ -94,7 +94,7 @@ export default function FormCadFornecedor(props) {
         else {
             setMostrarAlertErro(true);
             setFornecedor(fornecedorVazio);
-            setTimeout(() => setMostrarAlertErro(false), 3000)
+            setTimeout(() => setMostrarAlertErro(false), 2000)
         }
         e.stopPropagation();
         e.preventDefault();

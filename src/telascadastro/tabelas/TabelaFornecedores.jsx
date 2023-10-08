@@ -1,13 +1,17 @@
-import { Container, Table, Button } from "react-bootstrap";
+import { Container, Table, Button, Alert } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
+import { useState } from "react";
 export default function TabelaFornecedores(props) {
     const { conteudo, listaFornecedor, setListaFornecedor, setFornecedorParaEdicao, setModoEdicao } = props;
+    const [exibirMensagem, setExibirMensagem] = useState(false);
     function excluirFornecedor(fornecedor){
         if(confirm("Deseja realmente excluir o fornecedor?")){
             setListaFornecedor(
                 listaFornecedor.filter((itemLista => itemLista.cpf !== fornecedor.cpf))
-            )
+            );
+            setExibirMensagem(true);
+            setTimeout(() => setExibirMensagem(false), 2000);
         }
     }
 
@@ -27,6 +31,13 @@ export default function TabelaFornecedores(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>FORNECEDORES CADASTRADOS</h1>
+            {
+                exibirMensagem && (
+                    <Alert variant="danger">
+                        Fornecedor excluído com sucesso!
+                    </Alert>
+                )
+            }
             <Table striped bordered hover>
                 <thead>
                     <tr>

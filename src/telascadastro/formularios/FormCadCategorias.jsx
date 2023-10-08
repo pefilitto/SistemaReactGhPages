@@ -55,18 +55,18 @@ export default function FormCadCategoria(props) {
                 if (!buscaCategoria(listaCategorias, tipo, tamanho)) {
                     setListaCategorias([...listaCategorias, categoria]);
                     setMostrarAlertSucesso(true);
-                    setTimeout(() => setMostrarAlertSucesso(false), 3000);
+                    setTimeout(() => setMostrarAlertSucesso(false), 2000);
                 }
                 else {
                     setAlertCategoriaCadastrada(true);
                     setCategoria(categoriaVazia)
-                    setTimeout(() => setAlertCategoriaCadastrada(false), 3000);
+                    setTimeout(() => setAlertCategoriaCadastrada(false), 2000);
                 }
             }
             else {
                 setListaCategorias([...listaCategorias.filter((item) => item.tipoProduto !== categoria.tipoProduto), categoria]);
                 setMostrarAlertEdicao(true);
-                setTimeout(() => setMostrarAlertEdicao(false), 3000);
+                setTimeout(() => setMostrarAlertEdicao(false), 2000);
                 setModoEdicao(false);
                 setCategoriaParaEdicao(categoriaVazia)
             }

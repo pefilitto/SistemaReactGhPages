@@ -72,18 +72,18 @@ export default function FormCadProdutos(props) {
                     if (!buscaProduto(listaProdutos, nome)) {
                         setListaProdutos([...listaProdutos, produto]);
                         setMostrarAlertSucesso(true)
-                        setTimeout(() => setMostrarAlertSucesso(false), 3000)
+                        setTimeout(() => setMostrarAlertSucesso(false), 2000)
                     }
                     else {
                         setAlertProdutoCadastrado(true);
                         setProduto(produtoVazio);
-                        setTimeout(() => setAlertProdutoCadastrado(false), 3000)
+                        setTimeout(() => setAlertProdutoCadastrado(false), 2000)
                     }
                 }
                 else {
                     setListaProdutos([...listaProdutos.filter((item) => item.nome !== produto.nome), produto]);
                     setMostrarAlertEdicao(true);
-                    setTimeout(() => setMostrarAlertEdicao(false), 3000)
+                    setTimeout(() => setMostrarAlertEdicao(false), 2000)
                     setModoEdicao(false);
                     setProdutoParaEdicao(produtoVazio)
                 }
@@ -96,7 +96,7 @@ export default function FormCadProdutos(props) {
         }
         else {
             setMostrarAlertErro(true);
-            setTimeout(() => setMostrarAlertErro(false), 3000)
+            setTimeout(() => setMostrarAlertErro(false), 2000)
         }
         e.stopPropagation();
         e.preventDefault();
