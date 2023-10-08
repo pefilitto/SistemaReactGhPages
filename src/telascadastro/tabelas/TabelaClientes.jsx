@@ -1,14 +1,18 @@
-import { Container, Table, Row, Button } from "react-bootstrap";
+import { Container, Table, Row, Button, Alert } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
+import { useState } from "react";
 
 export default function TabelaClientes(props) {
     const { estado, listaClientes, setListaClientes, setModoEdicao, setClienteParaEdicao} = props;
+    const [exibirMensagem, setExibirMensagem] = useState(false);
     function excluirCliente(cliente) {
         if (confirm("Deseja realmente excluir o cliente?")) {
             setListaClientes(
                 listaClientes.filter((itemLista => itemLista.cpf !== cliente.cpf))
             );
+            setExibirMensagem(true);
+            setTimeout(() => setExibirMensagem(false), 2000);
         }
     }
 
@@ -29,6 +33,13 @@ export default function TabelaClientes(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>CLIENTES CADASTRADOS</h1>
+            {
+                exibirMensagem && (
+                    <Alert variant="danger">
+                        Cliente excluído com sucesso!
+                    </Alert>
+                )
+            }
             <Table striped bordered hover>
                 <thead>
                     <tr>

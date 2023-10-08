@@ -1,20 +1,25 @@
-import { Button, Container, Table } from "react-bootstrap";
+import { Button, Container, Table, Alert } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
+import { useState } from "react";
 export default function TabelaCategorias(props) {
     const { conteudo, listaCategorias, setListaCategorias, setModoEdicao, setCategoriaParaEdicao } = props;
 
-    function editarCategoria(categoria){
+    const [exibirMensagem, setExibirMensagem] = useState(false);
+
+    function editarCategoria(categoria) {
         setModoEdicao(true);
         setCategoriaParaEdicao(categoria);
         conteudo(true);
     }
 
-    function excluirCategoria(categoria){
-        if(confirm("Deseja realmente excluir essa categoria?")){
+    function excluirCategoria(categoria) {
+        if (confirm("Deseja realmente excluir essa categoria?")) {
             setListaCategorias(
                 listaCategorias.filter((item => item.tipoProduto !== categoria.tipoProduto))
             )
+            setExibirMensagem(true);
+            setTimeout(() => setExibirMensagem(false), 2000)
         }
     }
 
@@ -30,6 +35,13 @@ export default function TabelaCategorias(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>CATEGORIAS CADASTRADAS</h1>
+            {
+                exibirMensagem && (
+                    <Alert variant="danger">
+                        Categoria excluída com sucesso!
+                    </Alert>
+                )
+            }
             <Table striped bordered hover>
                 <thead>
                     <tr>
