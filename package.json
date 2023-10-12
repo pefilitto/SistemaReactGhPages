@@ -1,10 +1,7 @@
 {
   "name": "meusistema",
   "version": "0.1.0",
-<<<<<<< HEAD
   "private": true,
-=======
->>>>>>> b8d5091c9b87f7fc21e14f4b1400db2f325b41a2
   "homepage": "https://pefilitto.github.io/SistemaReactGhPages",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
