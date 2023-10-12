@@ -8,7 +8,7 @@ import TelaLogin from '../telascadastro/TelaLogin';
 
 export default function Rotas() {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename='/SistemaReactGhPages'>
             <Routes>
                 <Route path='/' element={<TelaCadastroCliente/>}></Route>
                 <Route path='/cadastroclientes' element={<TelaCadastroCliente />} />
