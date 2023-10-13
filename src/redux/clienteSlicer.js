@@ -1,0 +1,32 @@
+import { createSlice } from "@reduxjs/toolkit"
+import ESTADO from "../recursos/estado"
+
+
+const clienteSlicer = ({
+    name: 'cliente',
+    estadoInicial:{
+        status: ESTADO.Ocioso,
+        mensagem: '',
+        listaClientes: []
+    },
+    reducers:{
+        //no parametro é passado o estado atual do cliente que será alterado e a action que irá alterá-lo
+        inserir:(estado, action) => {
+            estado.listaClientes.push(action.payload);
+        },
+        excluir: (estado, action) => {
+            estado.listaClientes = estado.listaClientes.filter((cliente) => cliente.cpf !== action.payload.cliente.cpf);
+        },
+        editar: (estado, action) => {
+            //Atualizar implicara em excluir o cliente da lista e adiciona-lo novamente com os dados atualizados
+            const listaTemporariaCliente = estado.listaClientes.filter(cliente => cliente.cpf !== action.payload.cliente.cpf);
+            estado.listaClientes(...listaClientes, listaTemporariaCliente)
+        }
+    }
+})
+
+//Exportando as actions que alteram o estado de 'cliente'
+export const { inserir, excluir, editar } = clienteSlicer.actions;
+
+//Exportando o redutor para ser usado na store
+export default clienteSlicer.reducers; 
