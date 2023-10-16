@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit"
 import ESTADO from "../recursos/estado"
 
 
-const clienteSlicer = ({
+const clienteSlicer = createSlice({
     name: 'cliente',
-    estadoInicial:{
+    initialState:{
         status: ESTADO.Ocioso,
         mensagem: '',
         listaClientes: []
@@ -15,12 +15,12 @@ const clienteSlicer = ({
             estado.listaClientes.push(action.payload);
         },
         excluir: (estado, action) => {
-            estado.listaClientes = estado.listaClientes.filter((cliente) => cliente.cpf !== action.payload.cliente.cpf);
+            estado.listaClientes = estado.listaClientes.filter(cliente => cliente.cpf !== action.payload.cpf);
         },
         editar: (estado, action) => {
             //Atualizar implicara em excluir o cliente da lista e adiciona-lo novamente com os dados atualizados
-            const listaTemporariaCliente = estado.listaClientes.filter(cliente => cliente.cpf !== action.payload.cliente.cpf);
-            estado.listaClientes(...listaClientes, listaTemporariaCliente)
+            const listaTemporariaCliente = estado.listaClientes.filter(cliente => cliente.cpf !== action.payload.cpf);
+            estado.listaClientes = [...listaTemporariaCliente, action.payload]
         }
     }
 })
@@ -29,4 +29,4 @@ const clienteSlicer = ({
 export const { inserir, excluir, editar } = clienteSlicer.actions;
 
 //Exportando o redutor para ser usado na store
-export default clienteSlicer.reducers; 
+export default clienteSlicer.reducer; 

@@ -6,8 +6,9 @@ import { Provider } from 'react-redux'
 export default function App() {
   return (
     <div className="App">
-      <Provider store={store}/>
-      <Rotas/>
+      <Provider store={store}>
+        <Rotas/>
+      </Provider>
     </div>
   )
 }

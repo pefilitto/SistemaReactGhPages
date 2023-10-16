@@ -3,17 +3,20 @@ import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 import { Alert } from 'react-bootstrap';
+import { useSelector, useDispatch } from "react-redux";
+import { editar, inserir } from '../../redux/clienteSlicer'
+
+
 export default function FormCadCliente(props) {
     //Os atributos desse objeto devem estar associados aos atributos do formulario
     const {
         estado,
-        listaClientes,
-        setListaClientes,
         modoEdicao,
         setModoEdicao,
         clienteParaEdicao,
         setClienteParaEdicao,
     } = props;
+
     const [formValidado, setFormValidado] = useState(false);
     const estadoInicialCliente = clienteParaEdicao;
     const [cliente, setCliente] = useState(estadoInicialCliente);
@@ -22,6 +25,9 @@ export default function FormCadCliente(props) {
     const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
     const [alertClienteCadastrado, setAlertClienteCadastrado] = useState(false);
     //const [listaLocalStorage, setListaLocalStorage] = useState([])
+    const {status, mensagem, listaClientes} = useSelector((state) => state.cliente)
+    
+    const dispatch = useDispatch();
 
     const clienteVazio = {
         cpf: '',
@@ -78,7 +84,7 @@ export default function FormCadCliente(props) {
                 //limpar os dados do formulario
                 if (!modoEdicao) {
                     if (!buscaCliente(listaClientes, cpf)) {
-                        setListaClientes([...listaClientes, clientePreenchido]);
+                        dispatch(inserir(clientePreenchido))
                         setMostrarAlertSucesso(true)
                         setTimeout(() => setMostrarAlertSucesso(false), 2000)
                     }
@@ -89,8 +95,7 @@ export default function FormCadCliente(props) {
                     }
                 }
                 else {
-                    //Exibir aqui a lista de clientes filtrada
-                    setListaClientes([...listaClientes.filter((itemCliente) => itemCliente.cpf !== cliente.cpf), cliente]);
+                    dispatch(editar(cliente));
                     setMostrarAlertEdicao(true);
                     setTimeout(() => setMostrarAlertEdicao(false), 2000)
                     setModoEdicao(false);
