@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/SistemaReactGhPages/static/css/main.99e4cf39.css",
-    "main.js": "/SistemaReactGhPages/static/js/main.976429ed.js",
+    "main.js": "/SistemaReactGhPages/static/js/main.c5e0cd4c.js",
     "index.html": "/SistemaReactGhPages/index.html",
     "main.99e4cf39.css.map": "/SistemaReactGhPages/static/css/main.99e4cf39.css.map",
-    "main.976429ed.js.map": "/SistemaReactGhPages/static/js/main.976429ed.js.map"
+    "main.c5e0cd4c.js.map": "/SistemaReactGhPages/static/js/main.c5e0cd4c.js.map"
   },
   "entrypoints": [
     "static/css/main.99e4cf39.css",
-    "static/js/main.976429ed.js"
+    "static/js/main.c5e0cd4c.js"
   ]
 }
