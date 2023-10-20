@@ -1,12 +1,13 @@
 import { Container, Form, Row, Col, FloatingLabel, Button, Alert } from 'react-bootstrap'
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { editar, inserir } from '../../redux/categoriaSlicer'
+
 export default function FormCadCategoria(props) {
     const {
         conteudo,
-        listaCategorias,
-        setListaCategorias,
         modoEdicao,
         setModoEdicao,
         categoriaParaEdicao,
@@ -19,6 +20,8 @@ export default function FormCadCategoria(props) {
     const [mostrarAlertSucesso, setMostrarAlertSucesso] = useState(false);
     const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
     const [alertCategoriaCadastrada, setAlertCategoriaCadastrada] = useState(false);
+    const {status, estado, listaCategorias} = useSelector((state) => state.categoria);
+    const dispatch = useDispatch();
 
     const categoriaVazia = {
         tipoProduto: '',
@@ -53,7 +56,7 @@ export default function FormCadCategoria(props) {
         if (form.checkValidity()) {
             if (!modoEdicao) {
                 if (!buscaCategoria(listaCategorias, tipo, tamanho)) {
-                    setListaCategorias([...listaCategorias, categoria]);
+                    dispatch(inserir(categoria));
                     setMostrarAlertSucesso(true);
                     setTimeout(() => setMostrarAlertSucesso(false), 2000);
                 }
@@ -64,7 +67,7 @@ export default function FormCadCategoria(props) {
                 }
             }
             else {
-                setListaCategorias([...listaCategorias.filter((item) => item.tipoProduto !== categoria.tipoProduto), categoria]);
+                dispatch(editar(categoria));
                 setMostrarAlertEdicao(true);
                 setTimeout(() => setMostrarAlertEdicao(false), 2000);
                 setModoEdicao(false);

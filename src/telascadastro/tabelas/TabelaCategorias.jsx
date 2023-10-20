@@ -2,9 +2,13 @@ import { Button, Container, Table, Alert } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from "react";
-export default function TabelaCategorias(props) {
-    const { conteudo, listaCategorias, setListaCategorias, setModoEdicao, setCategoriaParaEdicao } = props;
+import { useDispatch, useSelector } from "react-redux";
+import { excluir } from '../../redux/categoriaSlicer'
 
+export default function TabelaCategorias(props) {
+    const { conteudo, setModoEdicao, setCategoriaParaEdicao } = props;
+    const dispatch = useDispatch();
+    const {listaCategorias} = useSelector((state) => state.categoria)
     const [exibirMensagem, setExibirMensagem] = useState(false);
 
     function editarCategoria(categoria) {
@@ -15,9 +19,7 @@ export default function TabelaCategorias(props) {
 
     function excluirCategoria(categoria) {
         if (confirm("Deseja realmente excluir essa categoria?")) {
-            setListaCategorias(
-                listaCategorias.filter((item => item.tipoProduto !== categoria.tipoProduto))
-            )
+            dispatch(excluir(categoria));
             setExibirMensagem(true);
             setTimeout(() => setExibirMensagem(false), 2000)
         }

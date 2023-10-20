@@ -5,7 +5,6 @@ import { useState } from "react";
 
 export default function TelaCategorias() {
     const [telaCategorias, setTelaCategorias] = useState(true);
-    const [listaCategorias, setListaCategorias] = useState([]);
     const [categoriaParaEdicao, setCategoriaParaEdicao] = useState({})
     const [modoEdicao, setModoEdicao] = useState(false);
     return (
@@ -13,8 +12,6 @@ export default function TelaCategorias() {
             {telaCategorias ? (
                 <FormCadCategoria
                     conteudo={setTelaCategorias}
-                    listaCategorias={listaCategorias}
-                    setListaCategorias={setListaCategorias}
                     setCategoriaParaEdicao={setCategoriaParaEdicao}
                     modoEdicao={modoEdicao}
                     setModoEdicao={setModoEdicao}
@@ -23,8 +20,6 @@ export default function TelaCategorias() {
             ) : (
                 <TabelaCategorias
                     conteudo={setTelaCategorias}
-                    listaCategorias={listaCategorias}
-                    setListaCategorias={setListaCategorias}
                     setModoEdicao={setModoEdicao}
                     setCategoriaParaEdicao={setCategoriaParaEdicao}
                 />

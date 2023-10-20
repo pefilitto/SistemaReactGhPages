@@ -2,9 +2,15 @@ import { Container, Table, Button, Alert } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from "react";
+import {excluir} from '../../redux/produtoSlicer'
+import { useDispatch, useSelector } from "react-redux";
+
 export default function TabelaProdutos(props) {
-    const { conteudo, listaProdutos, setListaProdutos, setModoEdicao, modoEdicao, produtoParaEdicao, setProdutoParaEdicao} = props;
+    const { conteudo, setModoEdicao, setProdutoParaEdicao} = props;
     const [exibirMensagem, setExibirMensagem] = useState(false);
+    const dispatch = useDispatch();
+    const {listaProdutos} = useSelector((state) => state.produto)
+
     function editarProduto(produto){
         setModoEdicao(true);
         setProdutoParaEdicao(produto);
@@ -13,9 +19,7 @@ export default function TabelaProdutos(props) {
 
     function excluirProduto(produto){
         if(confirm("Deseja realmente excluir esse produto?")){
-            setListaProdutos(
-                listaProdutos.filter((item => item.nome !== produto.nome))
-            );
+            dispatch(excluir(produto))
             setExibirMensagem(true);
             setTimeout(() => setExibirMensagem(false), 2000);
         }

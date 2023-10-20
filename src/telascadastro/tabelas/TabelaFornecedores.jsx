@@ -2,14 +2,18 @@ import { Container, Table, Button, Alert } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {excluir} from '../../redux/fornecedorSlicer'
+
 export default function TabelaFornecedores(props) {
-    const { conteudo, listaFornecedor, setListaFornecedor, setFornecedorParaEdicao, setModoEdicao } = props;
+    const { conteudo, setFornecedorParaEdicao, setModoEdicao } = props;
     const [exibirMensagem, setExibirMensagem] = useState(false);
+    const dispatch = useDispatch();
+    const {listaFornecedor} = useSelector((state) => state.fornecedor)
+
     function excluirFornecedor(fornecedor){
         if(confirm("Deseja realmente excluir o fornecedor?")){
-            setListaFornecedor(
-                listaFornecedor.filter((itemLista => itemLista.cpf !== fornecedor.cpf))
-            );
+            dispatch(excluir(fornecedor))
             setExibirMensagem(true);
             setTimeout(() => setExibirMensagem(false), 2000);
         }

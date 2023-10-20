@@ -5,7 +5,6 @@ import { Container } from 'react-bootstrap'
 
 export default function TelaProdutos() {
     const [telaProdutos, setTelaProdutos] = useState(true);
-    const [listaProdutos, setListaProdutos] = useState([]);
     const [produtoParaEdicao, setProdutoParaEdicao] = useState({})
     const [modoEdicao, setModoEdicao] = useState(false);
     return (
@@ -13,8 +12,6 @@ export default function TelaProdutos() {
             {telaProdutos ? (
                 <FormCadProdutos
                     conteudo={setTelaProdutos}
-                    listaProdutos={listaProdutos}
-                    setListaProdutos={setListaProdutos}
                     modoEdicao={modoEdicao}
                     setModoEdicao={setModoEdicao}
                     produtoParaEdicao={produtoParaEdicao}
@@ -23,8 +20,6 @@ export default function TelaProdutos() {
             ) : (
                 <TabelaProdutos
                     conteudo={setTelaProdutos}
-                    listaProdutos={listaProdutos}
-                    setListaProdutos={setListaProdutos}
                     setModoEdicao={setModoEdicao}
                     setProdutoParaEdicao={setProdutoParaEdicao}
                 />

@@ -5,7 +5,6 @@ import { useState } from "react";
 
 export default function TelaFornecedor() {
     const [exibirFornecedor, setExibirFornecedor] = useState(true)
-    const [listaFornecedor, setListaFornecedor] = useState([]);
     const [fornecedorParaEdicao, setFornecedorParaEdicao] = useState({})
     const [modoEdicao, setModoEdicao] = useState(false);
     return (
@@ -13,8 +12,6 @@ export default function TelaFornecedor() {
             {exibirFornecedor ? (
                 <FormCadFornecedor 
                     conteudo={setExibirFornecedor}
-                    listaFornecedor={listaFornecedor}
-                    setListaFornecedor={setListaFornecedor}
                     fornecedorParaEdicao={fornecedorParaEdicao}
                     setFornecedorParaEdicao={setFornecedorParaEdicao}
                     modoEdicao={modoEdicao}
@@ -23,8 +20,6 @@ export default function TelaFornecedor() {
             ) : (
                 <TabelaFornecedores
                     conteudo={setExibirFornecedor}
-                    listaFornecedor={listaFornecedor} 
-                    setListaFornecedor={setListaFornecedor}
                     setFornecedorParaEdicao={setFornecedorParaEdicao}
                     setModoEdicao={setModoEdicao}
                 />

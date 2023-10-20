@@ -3,11 +3,11 @@ import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 import { Alert } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { editar, inserir } from '../../redux/fornecedorSlicer'
 export default function FormCadFornecedor(props) {
     const {
         conteudo,
-        listaFornecedor,
-        setListaFornecedor,
         modoEdicao,
         setModoEdicao,
         fornecedorParaEdicao,
@@ -20,6 +20,8 @@ export default function FormCadFornecedor(props) {
     const [mostrarAlertErro, setMostrarAlertErro] = useState(false);
     const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
     const [alertFornecedorCadastrado, setAlertFornecedorCadastrado] = useState(false);
+    const dispatch = useDispatch();
+    const {status, mensagem, listaFornecedor} = useSelector((state) => state.fornecedor);
 
     const fornecedorVazio = {
         cnpj: '',
@@ -67,7 +69,8 @@ export default function FormCadFornecedor(props) {
             if (form.checkValidity()) {
                 if (!modoEdicao) {
                     if (!buscaFornecedor(listaFornecedor, cnpj)) {
-                        setListaFornecedor([...listaFornecedor, fornecedor]);
+                        //setListaFornecedor([...listaFornecedor, fornecedor]);
+                        dispatch(inserir(fornecedor));
                         setMostrarAlertSucesso(true)
                         setTimeout(() => setMostrarAlertSucesso(false), 2000)
                     }
@@ -78,7 +81,8 @@ export default function FormCadFornecedor(props) {
                     }
                 }
                 else {
-                    setListaFornecedor([...listaFornecedor.filter((itemLista) => itemLista.cnpj !== fornecedor.cnpj), fornecedor]);
+                    //setListaFornecedor([...listaFornecedor.filter((itemLista) => itemLista.cnpj !== fornecedor.cnpj), fornecedor]);
+                    dispatch(editar(fornecedor));
                     setMostrarAlertEdicao(true);
                     setTimeout(() => setMostrarAlertEdicao(false), 2000)
                     setModoEdicao(false);
