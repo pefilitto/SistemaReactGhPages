@@ -2,15 +2,19 @@ import { Container, Table, Row, Button, Alert } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { excluir } from "../../redux/clienteSlicer";
 
 export default function TabelaClientes(props) {
-    const { estado, listaClientes, setListaClientes, setModoEdicao, setClienteParaEdicao} = props;
+    const { estado, setModoEdicao, setClienteParaEdicao} = props;
     const [exibirMensagem, setExibirMensagem] = useState(false);
+    const {listaClientes} = useSelector((state) => state.cliente);
+
+    const dispatch = useDispatch();
+    
     function excluirCliente(cliente) {
         if (confirm("Deseja realmente excluir o cliente?")) {
-            setListaClientes(
-                listaClientes.filter((itemLista => itemLista.cpf !== cliente.cpf))
-            );
+            dispatch(excluir(cliente));
             setExibirMensagem(true);
             setTimeout(() => setExibirMensagem(false), 2000);
         }

@@ -3,11 +3,12 @@ import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 import { Alert } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { editar, inserir } from '../../redux/produtoSlicer'
+
 export default function FormCadProdutos(props) {
     const {
         conteudo,
-        listaProdutos,
-        setListaProdutos,
         modoEdicao,
         setModoEdicao,
         produtoParaEdicao,
@@ -20,6 +21,8 @@ export default function FormCadProdutos(props) {
     const [mostrarAlertErro, setMostrarAlertErro] = useState(false);
     const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
     const [alertProdutoCadastrado, setAlertProdutoCadastrado] = useState(false);
+    const dispatch = useDispatch();
+    const {status, mensagem, listaProdutos} = useSelector((state) => state.produto)
 
     const produtoVazio = {
         nome: '',
@@ -70,7 +73,7 @@ export default function FormCadProdutos(props) {
             if (form.checkValidity()) {
                 if (!modoEdicao) {
                     if (!buscaProduto(listaProdutos, nome)) {
-                        setListaProdutos([...listaProdutos, produto]);
+                        dispatch(inserir(produto))
                         setMostrarAlertSucesso(true)
                         setTimeout(() => setMostrarAlertSucesso(false), 2000)
                     }
@@ -81,7 +84,7 @@ export default function FormCadProdutos(props) {
                     }
                 }
                 else {
-                    setListaProdutos([...listaProdutos.filter((item) => item.nome !== produto.nome), produto]);
+                    dispatch(editar(produto))
                     setMostrarAlertEdicao(true);
                     setTimeout(() => setMostrarAlertEdicao(false), 2000)
                     setModoEdicao(false);
