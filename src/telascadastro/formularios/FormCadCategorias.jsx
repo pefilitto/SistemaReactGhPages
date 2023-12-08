@@ -1,9 +1,10 @@
-import { Container, Form, Row, Col, FloatingLabel, Button, Alert } from 'react-bootstrap'
+import { Container, Form, Row, Col, FloatingLabel, Button, Alert, Spinner } from 'react-bootstrap'
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { editar, inserir } from '../../redux/categoriaSlicer'
+import { gravarCategoria } from '../../redux/categoriaSlicer'
+import ESTADO from '../../recursos/estado';
 
 export default function FormCadCategoria(props) {
     const {
@@ -20,7 +21,7 @@ export default function FormCadCategoria(props) {
     const [mostrarAlertSucesso, setMostrarAlertSucesso] = useState(false);
     const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
     const [alertCategoriaCadastrada, setAlertCategoriaCadastrada] = useState(false);
-    const {status, estado, listaCategorias} = useSelector((state) => state.categoria);
+    const { estado, mensagem } = useSelector((state) => state.categoria);
     const dispatch = useDispatch();
 
     const categoriaVazia = {
@@ -41,11 +42,7 @@ export default function FormCadCategoria(props) {
         setCategoria({ ...categoria, [componente.name]: componente.value })
     }
 
-    function buscaCategoria(listaCategorias, tipo, tamanho) {
-        return listaCategorias.find((element) => element.tipoProduto === tipo && element.tamanho === tamanho) !== undefined;
-    }
-
-    function manipularSubmissao(e) {
+    async function manipularSubmissao(e) {
         const form = e.currentTarget;
 
         const tipo = document.querySelector('#tipoProduto').value;
@@ -55,33 +52,33 @@ export default function FormCadCategoria(props) {
 
         if (form.checkValidity()) {
             if (!modoEdicao) {
-                if (!buscaCategoria(listaCategorias, tipo, tamanho)) {
-                    dispatch(inserir(categoria));
+                setModoEdicao(false);
+                dispatch(gravarCategoria(categoria));
+                if(estado === ESTADO.Erro){
+                    setAlertCategoriaCadastrada(true);
+                    setTimeout(() => setAlertCategoriaCadastrada(false), 2000);
+                }
+                else{
                     setMostrarAlertSucesso(true);
                     setTimeout(() => setMostrarAlertSucesso(false), 2000);
                 }
-                else {
-                    setAlertCategoriaCadastrada(true);
-                    setCategoria(categoriaVazia)
-                    setTimeout(() => setAlertCategoriaCadastrada(false), 2000);
-                }
+                
             }
             else {
                 dispatch(editar(categoria));
+                setModoEdicao(false);
                 setMostrarAlertEdicao(true);
                 setTimeout(() => setMostrarAlertEdicao(false), 2000);
-                setModoEdicao(false);
-                setCategoriaParaEdicao(categoriaVazia)
             }
-            setCategoria(categoriaVazia);
-            setFormValidado(false);
         }
         else {
-            setFormValidado(true);
+            setCategoria(categoriaVazia);
+            setFormValidado(false);
         }
         e.stopPropagation();
         e.preventDefault();
     }
+
     return (
         <Container>
             <Cabecalho conteudo="Sistema de Gestão Comercial" />
@@ -141,6 +138,5 @@ export default function FormCadCategoria(props) {
                 </Row>
             </Form>
         </Container>
-
     )
 }

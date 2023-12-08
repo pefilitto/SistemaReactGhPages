@@ -1,15 +1,19 @@
 import { Button, Container, Table, Alert } from "react-bootstrap";
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { excluir } from '../../redux/categoriaSlicer'
+import { buscarCategorias } from '../../redux/categoriaSlicer'
 
 export default function TabelaCategorias(props) {
     const { conteudo, setModoEdicao, setCategoriaParaEdicao } = props;
     const dispatch = useDispatch();
-    const {listaCategorias} = useSelector((state) => state.categoria)
+    const { listaCategorias } = useSelector(state => state.categoria)
     const [exibirMensagem, setExibirMensagem] = useState(false);
+
+    useEffect(() => {
+        dispatch(buscarCategorias());
+    }, [dispatch]);
 
     function editarCategoria(categoria) {
         setModoEdicao(true);
@@ -24,7 +28,6 @@ export default function TabelaCategorias(props) {
             setTimeout(() => setExibirMensagem(false), 2000)
         }
     }
-
 
     return (
         <Container>
@@ -47,6 +50,7 @@ export default function TabelaCategorias(props) {
             <Table striped bordered hover>
                 <thead>
                     <tr>
+                        <th>Codigo</th>
                         <th>Categoria</th>
                         <th>Tamanho</th>
                     </tr>
@@ -55,6 +59,7 @@ export default function TabelaCategorias(props) {
                     {
                         listaCategorias.map((categoria, index) => (
                             <tr key={index}>
+                                <td>{categoria.codigo}</td>
                                 <td>{categoria.tipoProduto}</td>
                                 <td>{categoria.tamanho}</td>
                                 <td style={{

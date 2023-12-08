@@ -6,7 +6,6 @@ import { Alert } from 'react-bootstrap';
 import { useSelector, useDispatch } from "react-redux";
 import { editar, inserir } from '../../redux/clienteSlicer'
 
-
 export default function FormCadCliente(props) {
     //Os atributos desse objeto devem estar associados aos atributos do formulario
     const {
