@@ -17,13 +17,14 @@ export default function FormCadFornecedor(props) {
     const [formValidado, setFormValidado] = useState(false)
     const estadoInicialFornecedor = fornecedorParaEdicao;
     const [fornecedor, setFornecedor] = useState(estadoInicialFornecedor);
+    const [alertErro, setAlertErro] = useState(false);
     const [mostrarAlert, setMostrarAlert] = useState(false);
     const dispatch = useDispatch();
     const { estado, mensagem } = useSelector((state) => state.fornecedor);
 
     const fornecedorVazio = {
         cnpj: '',
-        nome: '',
+        nomeEmpresa: '',
         endereco: '',
         numero: '',
         cidade: '',
@@ -81,21 +82,22 @@ export default function FormCadFornecedor(props) {
                     dispatch(gravarFornecedor(fornecedor));
                     verificaEstado(estado)
                 }
-            }
-            else {
-                //setListaFornecedor([...listaFornecedor.filter((itemLista) => itemLista.cnpj !== fornecedor.cnpj), fornecedor]);
-                dispatch(alterarFornecedor(fornecedor));
-                verificaEstado(estado)
-                setModoEdicao(false);
-                setFornecedorParaEdicao(fornecedorVazio)
+                else {
+                    //setListaFornecedor([...listaFornecedor.filter((itemLista) => itemLista.cnpj !== fornecedor.cnpj), fornecedor]);
+                    dispatch(alterarFornecedor(fornecedor));
+                    console.log(estado)
+                    verificaEstado(estado)
+                    setModoEdicao(false);
+                    setFornecedorParaEdicao(fornecedorVazio)
+                }
             }
             setFornecedor(fornecedorVazio);
             setFormValidado(false);
         }
         else {
-            setMostrarAlert(true);
+            setAlertErro(true)
+            setTimeout(() => setAlertErro(false), 2000)
             setFornecedor(fornecedorVazio);
-            verificaEstado(estado)
         }
         e.stopPropagation();
         e.preventDefault();
@@ -114,8 +116,13 @@ export default function FormCadFornecedor(props) {
                 marginTop: "20px",
             }}>CADASTRO DE FORNECEDORES</h1>
             {mostrarAlert && (
-                <Alert variant="success">
+                <Alert variant="dark">
                     {mensagem}
+                </Alert>
+            )}
+            {alertErro && (
+                <Alert variant="danger">
+                    Preencha todos os campos!
                 </Alert>
             )}
             <Form noValidate validated={formValidado} onSubmit={manipularSubmissao}>
@@ -140,7 +147,7 @@ export default function FormCadFornecedor(props) {
                                 label="Nome da Empresa:"
                                 className="mb-3"
                             >
-                                <Form.Control type="text" placeholder="Informe o nome da empresa" id="nome" name="nome" value={fornecedor.nomeEmpresa} onChange={manipularMudancas} required />
+                                <Form.Control type="text" placeholder="Informe o nome da empresa" id="nome" name="nomeEmpresa" value={fornecedor.nomeEmpresa} onChange={manipularMudancas} required />
                             </FloatingLabel>
                             <Form.Control.Feedback type="invalid">Informe o nome!</Form.Control.Feedback>
                         </Form.Group>

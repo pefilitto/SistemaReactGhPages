@@ -13,9 +13,8 @@ export const gravarFornecedor = createAsyncThunk("fornecedor/gravarFornecedor", 
             body: JSON.stringify(fornecedor)
         })
     
+        const dados = await resposta.json();
         if (resposta.ok) {
-            const dados = await resposta.json();
-    
             return {
                 status: dados.status,
                 codigoGerado: dados.codigoFornecedor,
@@ -25,7 +24,7 @@ export const gravarFornecedor = createAsyncThunk("fornecedor/gravarFornecedor", 
         else {
             return {
                 status: false,
-                mensagem: "Nao foi possivel gravar o fornecedor"
+                mensagem: dados.mensagem
             }
         }
     }
@@ -43,9 +42,8 @@ export const buscarFornecedor = createAsyncThunk("fornecedor/buscarFornecedor", 
             method: "GET"
         });
 
+        const dados = await resposta.json();
         if (resposta.ok) {
-            const dados = await resposta.json();
-
             return {
                 status: dados.status,
                 listaFornecedor: dados.fornecedores,
@@ -54,7 +52,7 @@ export const buscarFornecedor = createAsyncThunk("fornecedor/buscarFornecedor", 
         else {
             return {
                 status: false,
-                mensagem: "Erro ao buscar fornecedores"
+                mensagem: dados.mensagem
             }
         }
     }
@@ -72,9 +70,8 @@ export const excluirFornecedor = createAsyncThunk("fornecedor/excluirFornecedor"
             method: "DELETE"
         })
     
+        const dados = await resposta.json();
         if (resposta.ok) {
-            const dados = await resposta.json();
-    
             return {
                 status: dados.status,
                 mensagem: dados.mensagem
@@ -83,7 +80,7 @@ export const excluirFornecedor = createAsyncThunk("fornecedor/excluirFornecedor"
         else {
             return {
                 status: false,
-                mensagem: "Nao foi possivel excluir o fornecedor"
+                mensagem: dados.mensagem
             }
         }
     }
@@ -105,9 +102,8 @@ export const alterarFornecedor = createAsyncThunk("fornecedor/alterarFornecedor"
             body: JSON.stringify(fornecedor)
         })
 
+        const dados = await resposta.json();
         if(resposta.ok){
-            const dados = await resposta.json();
-
             return {
                 status: dados.status,
                 mensagem: dados.mensagem
@@ -116,7 +112,7 @@ export const alterarFornecedor = createAsyncThunk("fornecedor/alterarFornecedor"
         else{
             return {
                 status: false,
-                mensagem: "Nao foi possivel atualizar o fornecedor"
+                mensagem: dados.mensagem
             }
         }
     }
@@ -136,16 +132,6 @@ const fornecedorSlicer = createSlice({
         listaFornecedor: []
     },
     reducers: {
-        /*inserir: (estado, action) => {
-            estado.listaFornecedor.push(action.payload);
-        },
-        editar: (estado, action) => {
-            const listaTemporaria = estado.listaFornecedor.filter(fornecedor => fornecedor.cnpj !== action.payload.cnpj);
-            estado.listaFornecedor = [...listaTemporaria, action.payload];
-        },
-        excluir: (estado, action) => {
-            estado.listaFornecedor = estado.listaFornecedor.filter(fornecedor => fornecedor.cnpj !== action.payload.cnpj);
-        }*/
     },
     extraReducers: (builder) => {
         builder
@@ -155,22 +141,22 @@ const fornecedorSlicer = createSlice({
             })
             .addCase(gravarFornecedor.fulfilled, (state, action) => {
                 state.estado = ESTADO.Ocioso,
-                    state.listaFornecedor.push(action.payload.fornecedor),
-                    state.mensagem = action.payload.mensagem
+                state.listaFornecedor.push(action.payload),
+                state.mensagem = action.payload.mensagem
             })
             .addCase(gravarFornecedor.rejected, (state, action) => {
                 state.estado = ESTADO.Erro,
-                    state.mensagem = action.error.message
+                state.mensagem = action.error.message
             })
 
             .addCase(buscarFornecedor.pending, (state, action) => {
                 state.estado = ESTADO.Pendente,
-                    state.mensagem = "Buscando fornecedores..."
+                state.mensagem = "Buscando fornecedores..."
             })
             .addCase(buscarFornecedor.fulfilled, (state, action) => {
                 state.estado = ESTADO.Ocioso,
-                    state.listaFornecedor = action.payload.listaFornecedor,
-                    state.mensagem = action.payload.mensagem
+                state.listaFornecedor = action.payload.listaFornecedor,
+                state.mensagem = action.payload.mensagem
             })
             .addCase(buscarFornecedor.rejected, (state, action) => {
                 state.estado = ESTADO.Erro,
@@ -198,7 +184,7 @@ const fornecedorSlicer = createSlice({
             .addCase(alterarFornecedor.fulfilled, (state, action) => {
                 state.estado = ESTADO.Ocioso;
                 const index = state.listaFornecedor.findIndex(fornecedor => fornecedor.cnpj === action.payload.cnpj);
-                state.listaFornecedor[index] = action.payload.fornecedor;
+                state.listaFornecedor[index] = action.payload;
                 state.mensagem = action.payload.mensagem
             })
             .addCase(alterarFornecedor.rejected, (state, action) => {

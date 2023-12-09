@@ -36,8 +36,8 @@ export const excluirProduto = createAsyncThunk("produto/excluirProdutos", async 
             method: "DELETE",
         })
 
+        const dados = await resposta.json();
         if (resposta.ok) {
-            const dados = await resposta.json();
             return {
                 status: dados.status,
                 mensagem: dados.mensagem
@@ -46,7 +46,7 @@ export const excluirProduto = createAsyncThunk("produto/excluirProdutos", async 
         else {
             return {
                 status: false,
-                mensagem: "Nao foi possivel excluir um produto"
+                mensagem: dados.mensagem
             }
         }
     } catch (e) {
@@ -79,7 +79,7 @@ export const gravarProdutos = createAsyncThunk("produto/gravarProdutos", async (
     else {
         return {
             status: false,
-            mensagem: "Erro ao gravar produto"
+            mensagem: dados.mensagem
         }
     }
 })
@@ -98,8 +98,8 @@ export const alterarProduto = createAsyncThunk("produto/alterarProduto", async (
         }
     })
 
+    const dados = await resposta.json();
     if (resposta.ok) {
-        const dados = await resposta.json();
         return {
             status: dados.status,
             mensagem: dados.mensagem
@@ -108,7 +108,7 @@ export const alterarProduto = createAsyncThunk("produto/alterarProduto", async (
     else {
         return {
             status: false,
-            mensagem: "Nao foi possivel alterar o produto"
+            mensagem: dados.mensagem
         }
     }
 })
@@ -163,7 +163,7 @@ const produtoSlice = createSlice({
             .addCase(gravarProdutos.fulfilled, (state, action) => {
                 state.estado = ESTADO.Ocioso;
                 state.mensagem = action.payload.mensagem;
-                state.listaProdutos.push(action.payload.produto)
+                state.listaProdutos.push(action.payload)
             })
 
             .addCase(gravarProdutos.rejected, (state, action) => {

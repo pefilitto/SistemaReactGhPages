@@ -1,7 +1,7 @@
 import { Container, Form, Row, Col, FloatingLabel, Button } from 'react-bootstrap'
 import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { alterarProduto, gravarProdutos } from '../../redux/produtoSlicer';
@@ -18,11 +18,11 @@ export default function FormCadProdutos(props) {
     const [formValidado, setFormValidado] = useState(false);
     const estadoInicialProduto = produtoParaEdicao;
     const [produto, setProduto] = useState(estadoInicialProduto);
+    const [alertErro, setAlertErro] = useState(false);
     const [mostrarAlert, setMostrarAlert] = useState(false);
     const dispatch = useDispatch();
     const { estado, mensagem } = useSelector((state) => state.produto)
     const { listaCategorias } = useSelector((state) => state.categoria)
-    dispatch(buscarCategorias());
 
     const produtoVazio = {
         nome: '',
@@ -85,10 +85,12 @@ export default function FormCadProdutos(props) {
 
             if (form.checkValidity()) {
                 if (!modoEdicao) {
+                    dispatch(buscarCategorias());
                     dispatch(gravarProdutos(produto));
                     verificaEstado(estado);
                 }
                 else {
+                    dispatch(buscarCategorias());
                     dispatch(alterarProduto(produto));
                     verificaEstado(estado);
                     setModoEdicao(false);
@@ -102,7 +104,8 @@ export default function FormCadProdutos(props) {
             }
         }
         else {
-            verificaEstado(estado);
+            setAlertErro(true);
+            setTimeout(() => setAlertErro(false), 2000);
         }
         e.stopPropagation();
         e.preventDefault();
@@ -119,8 +122,13 @@ export default function FormCadProdutos(props) {
                 marginTop: "20px",
             }}>CADASTRO DE PRODUTOS</h1>
             {mostrarAlert && (
-                <Alert variant="success">
+                <Alert variant="dark">
                     {mensagem}
+                </Alert>
+            )}
+            {alertErro && (
+                <Alert variant="danger">
+                    Preencha todos os campos!
                 </Alert>
             )}
             <Form noValidate validated={formValidado} onSubmit={manipularSubmissao}>

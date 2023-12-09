@@ -19,6 +19,7 @@ export default function FormCadCliente(props) {
     const [formValidado, setFormValidado] = useState(false);
     const estadoInicialCliente = clienteParaEdicao;
     const [cliente, setCliente] = useState(estadoInicialCliente);
+    const [alertErro, setAlertErro] = useState(false);
     const [mostrarAlert, setMostrarAlert] = useState(false);
     //const [listaLocalStorage, setListaLocalStorage] = useState([])
     const { estado, mensagem } = useSelector((state) => state.cliente)
@@ -112,9 +113,9 @@ export default function FormCadCliente(props) {
             }
         }
         else {
-            setMostrarAlert(true);
+            setAlertErro(true)
+            setTimeout(() => setAlertErro(false), 2000);
             setCliente(clienteVazio);
-            setTimeout(() => setMostrarAlert(false), 2000)
         }
         e.stopPropagation();
         e.preventDefault();
@@ -132,8 +133,13 @@ export default function FormCadCliente(props) {
                 marginTop: "20px",
             }}>CADASTRO DE CLIENTE</h1>
             {mostrarAlert && (
-                <Alert variant="success">
+                <Alert variant="dark">
                     {mensagem}
+                </Alert>
+            )}
+            {alertErro && (
+                <Alert variant="danger">
+                    Preencha todos os campos!
                 </Alert>
             )}
             <Form noValidate validated={formValidado} onSubmit={manipularSubmissao}>

@@ -98,7 +98,7 @@ export default function FormCadCategoria(props) {
                 marginTop: "20px",
             }}>CADASTRO DE CATEGORIAS</h1>
             {mostrarAlert && (
-                <Alert variant="success">
+                <Alert variant="dark">
                     {mensagem}
                 </Alert>
             )}

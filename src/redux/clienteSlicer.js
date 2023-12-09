@@ -7,9 +7,8 @@ export const buscarCliente = createAsyncThunk("cliente/buscarCliente", async () 
     try{
         const resposta = await fetch(urlBase, {method: "GET"});
         
+        const dados = await resposta.json();
         if(resposta.ok){
-            const dados = await resposta.json();
-
             return {
                 status: dados.status,
                 listaClientes: dados.cliente
@@ -18,7 +17,7 @@ export const buscarCliente = createAsyncThunk("cliente/buscarCliente", async () 
         else{
             return {
                 status: false,
-                mensagem: "Erro ao buscar clientes"
+                mensagem: dados.mensagem
             }
         }
     }
@@ -36,9 +35,8 @@ export const excluirCliente = createAsyncThunk("cliente/excluirCliente", async (
             method: "DELETE"
         })
     
+        const dados = await resposta.json();
         if(resposta.ok){
-            const dados = await resposta.json();
-    
             return {
                 status: dados.status,
                 mensagem: dados.mensagem
@@ -47,7 +45,7 @@ export const excluirCliente = createAsyncThunk("cliente/excluirCliente", async (
         else{
             return {
                 status: false,
-                mensagem: "Nao foi possivel excluir o cliente"
+                mensagem: dados.mensagem
             }
         }
     }
@@ -72,8 +70,9 @@ export const gravarCliente = createAsyncThunk("cliente/gravarCliente", async(cli
             mensagem: "Erro ao cadastrar cliente: " + e.message
         }
     })
+
+    const dados = await resposta.json();
     if(resposta.ok){
-        const dados = await resposta.json();
         return {
             status: dados.status,
             codigoGerado: dados.codigoGerado,
@@ -83,7 +82,7 @@ export const gravarCliente = createAsyncThunk("cliente/gravarCliente", async(cli
     else{
         return {
             status: false,
-            mensagem: "Erro ao cadastrar cliente"
+            mensagem: dados.mensagem
         }
     }
 });
@@ -97,9 +96,8 @@ export const alterarCliente = createAsyncThunk("cliente/alterarCliente", async (
         body: JSON.stringify(cliente)
     })
 
+    const dados = await resposta.json();
     if(resposta.ok){
-        const dados = await resposta.json();
-
         return {
             status: dados.status,
             mensagem: dados.mensagem
@@ -108,7 +106,7 @@ export const alterarCliente = createAsyncThunk("cliente/alterarCliente", async (
     else{
         return {
             status: false,
-            mensagem: "Nao foi possivel atualizar o cliente"
+            mensagem: dados.mensagem
         }
     }
 })
@@ -121,18 +119,6 @@ const clienteSlicer = createSlice({
         listaClientes: []
     },
     reducers:{
-        //no parametro é passado o estado atual do cliente que será alterado e a action que irá alterá-lo
-        /*inserir:(estado, action) => {
-            estado.listaClientes.push(action.payload);
-        },
-        excluir: (estado, action) => {
-            estado.listaClientes = estado.listaClientes.filter(cliente => cliente.cpf !== action.payload.cpf);
-        },
-        editar: (estado, action) => {
-            //Atualizar implicara em excluir o cliente da lista e adiciona-lo novamente com os dados atualizados
-            const listaTemporariaCliente = estado.listaClientes.filter(cliente => cliente.cpf !== action.payload.cpf);
-            estado.listaClientes = [...listaTemporariaCliente, action.payload];
-        }*/
     },
     extraReducers: (builder) => {
         builder
@@ -142,7 +128,7 @@ const clienteSlicer = createSlice({
             })
             .addCase(gravarCliente.fulfilled, (state, action) => {
                 state.estado = ESTADO.Ocioso,
-                state.listaClientes.push(action.payload.cliente),
+                state.listaClientes.push(action.payload),
                 state.mensagem = action.payload.mensagem
             })
             .addCase(gravarCliente.rejected, (state, action) => {

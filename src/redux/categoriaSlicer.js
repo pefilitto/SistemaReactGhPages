@@ -19,7 +19,7 @@ export const buscarCategorias = createAsyncThunk("categoria/buscarCategorias", a
             return {
                 status: false,
                 listaCategorias: [],
-                mensagem: "Ocorreu um erro ao recuperar as categorias da base dados"
+                mensagem: dados.mensagem
             }
         }
     } catch (e) {
@@ -37,8 +37,8 @@ export const excluirCategoria = createAsyncThunk("categoria/excluirCategoria", a
             method: "DELETE",
         });
 
+        const dados = await resposta.json();
         if (resposta.ok) {
-            const dados = await resposta.json();
             return {
                 status: dados.status,
                 mensagem: dados.mensagem
@@ -47,7 +47,7 @@ export const excluirCategoria = createAsyncThunk("categoria/excluirCategoria", a
         else {
             return {
                 status: false,
-                mensagem: "Não foi possível excluir do banco de dados"
+                mensagem: dados.mensagem
             };
         }
     } catch (error) {
@@ -72,8 +72,8 @@ export const alterarCategoria = createAsyncThunk("categoria/alterarCategoria", a
         }
     })
 
+    const dados = await resposta.json();
     if(resposta.ok){
-        const dados = await resposta.json();
         return {
             status: dados.status,
             mensagem: dados.mensagem
@@ -82,7 +82,7 @@ export const alterarCategoria = createAsyncThunk("categoria/alterarCategoria", a
     else{
         return {
             status: false,
-            mensagem: "Erro ao atualizar categoria"
+            mensagem: dados.mensagem
         }
     }
 })
@@ -101,8 +101,9 @@ export const gravarCategoria = createAsyncThunk("categoria/gravarCategoria", asy
             mensagem: "Não foi possível cadastrar uma categoria: " + e.message
         }
     })
+
+    const dados = await resposta.json();
     if (resposta.ok) {
-        const dados = await resposta.json();
         return {
             status: dados.status,
             mensagem: dados.mensagem,
@@ -112,7 +113,7 @@ export const gravarCategoria = createAsyncThunk("categoria/gravarCategoria", asy
     else {
         return {
             status: false,
-            mensagem: "Não foi possível cadastrar uma categoria"
+            mensagem: dados.mensagem
         }
     }
 })
@@ -125,17 +126,6 @@ const categoriaSlicer = createSlice({
         listaCategorias: []
     },
     reducers: {
-        /*inserir:(estado, action) => {
-            estado.listaCategorias.push(action.payload)
-        },
-        editar: (estado, action) => {
-            const listaTemporaria = estado.listaCategorias.filter(categoria => categoria.tipoProduto !== action.payload.tipoProduto)
-            estado.listaCategorias = [...listaTemporaria, action.payload]
-           
-        },
-        excluir: (estado, action) => {
-            estado.listaCategorias = estado.listaCategorias.filter(categoria => categoria.tipoProduto !== action.payload.tipoProduto)
-        }*/
     },
     extraReducers: (builder) => {
         builder
@@ -145,7 +135,7 @@ const categoriaSlicer = createSlice({
             })
             .addCase(gravarCategoria.fulfilled, (state, action) => {
                 state.estado = ESTADO.Ocioso,
-                state.listaCategorias.push(action.payload.categoria)
+                state.listaCategorias.push(action.payload)
                 state.mensagem = action.payload.mensagem
             })
             .addCase(gravarCategoria.rejected, (state, action) => {
