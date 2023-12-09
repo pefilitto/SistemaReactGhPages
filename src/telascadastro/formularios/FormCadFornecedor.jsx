@@ -4,7 +4,8 @@ import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { editar, inserir } from '../../redux/fornecedorSlicer'
+import { alterarFornecedor, gravarFornecedor } from '../../redux/fornecedorSlicer';
+
 export default function FormCadFornecedor(props) {
     const {
         conteudo,
@@ -16,12 +17,9 @@ export default function FormCadFornecedor(props) {
     const [formValidado, setFormValidado] = useState(false)
     const estadoInicialFornecedor = fornecedorParaEdicao;
     const [fornecedor, setFornecedor] = useState(estadoInicialFornecedor);
-    const [mostrarAlertSucesso, setMostrarAlertSucesso] = useState(false);
-    const [mostrarAlertErro, setMostrarAlertErro] = useState(false);
-    const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
-    const [alertFornecedorCadastrado, setAlertFornecedorCadastrado] = useState(false);
+    const [mostrarAlert, setMostrarAlert] = useState(false);
     const dispatch = useDispatch();
-    const {status, mensagem, listaFornecedor} = useSelector((state) => state.fornecedor);
+    const { estado, mensagem } = useSelector((state) => state.fornecedor);
 
     const fornecedorVazio = {
         cnpj: '',
@@ -40,7 +38,7 @@ export default function FormCadFornecedor(props) {
     function criaFornecedor(cnpj, nome, endereco, numero, cidade, cep) {
         const fornecedorInserido = {
             cnpj: cnpj,
-            nome: nome,
+            nomeEmpresa: nome,
             endereco: endereco,
             numero: numero,
             cidade: cidade,
@@ -49,8 +47,20 @@ export default function FormCadFornecedor(props) {
         return fornecedorInserido
     }
 
-    function buscaFornecedor(listaFornecedor, cnpj) {
-        return listaFornecedor.find((element) => element.cnpj === cnpj) !== undefined
+    function verificaEstado(estado){
+        while(estado == 2){
+            setMostrarAlert(true)    
+        }
+        setTimeout(() => setMostrarAlert(false), 2000)
+
+        if(estado == 1){
+            setMostrarAlert(true)
+            setTimeout(() => setMostrarAlert(false), 2000)
+        }
+        else{
+            setMostrarAlert(true)
+            setTimeout(() => setMostrarAlert(false), 2000)
+        }
     }
 
     function manipularSubmissao(e) {
@@ -68,37 +78,24 @@ export default function FormCadFornecedor(props) {
 
             if (form.checkValidity()) {
                 if (!modoEdicao) {
-                    if (!buscaFornecedor(listaFornecedor, cnpj)) {
-                        //setListaFornecedor([...listaFornecedor, fornecedor]);
-                        dispatch(inserir(fornecedor));
-                        setMostrarAlertSucesso(true)
-                        setTimeout(() => setMostrarAlertSucesso(false), 2000)
-                    }
-                    else {
-                        setAlertFornecedorCadastrado(true);
-                        setFornecedor(fornecedorVazio);
-                        setTimeout(() => setAlertFornecedorCadastrado(false), 2000)
-                    }
+                    dispatch(gravarFornecedor(fornecedor));
+                    verificaEstado(estado)
                 }
-                else {
-                    //setListaFornecedor([...listaFornecedor.filter((itemLista) => itemLista.cnpj !== fornecedor.cnpj), fornecedor]);
-                    dispatch(editar(fornecedor));
-                    setMostrarAlertEdicao(true);
-                    setTimeout(() => setMostrarAlertEdicao(false), 2000)
-                    setModoEdicao(false);
-                    setFornecedorParaEdicao(fornecedorVazio)
-                }
-                setFornecedor(fornecedorVazio);
-                setFormValidado(false);
             }
             else {
-                setFormValidado(true);
+                //setListaFornecedor([...listaFornecedor.filter((itemLista) => itemLista.cnpj !== fornecedor.cnpj), fornecedor]);
+                dispatch(alterarFornecedor(fornecedor));
+                verificaEstado(estado)
+                setModoEdicao(false);
+                setFornecedorParaEdicao(fornecedorVazio)
             }
+            setFornecedor(fornecedorVazio);
+            setFormValidado(false);
         }
         else {
-            setMostrarAlertErro(true);
+            setMostrarAlert(true);
             setFornecedor(fornecedorVazio);
-            setTimeout(() => setMostrarAlertErro(false), 2000)
+            verificaEstado(estado)
         }
         e.stopPropagation();
         e.preventDefault();
@@ -116,24 +113,9 @@ export default function FormCadFornecedor(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>CADASTRO DE FORNECEDORES</h1>
-            {mostrarAlertSucesso && (
+            {mostrarAlert && (
                 <Alert variant="success">
-                    Fornecedor cadastrado com sucesso!
-                </Alert>
-            )}
-            {mostrarAlertErro && (
-                <Alert variant="danger">
-                    Erro: Preencha todos os campos!
-                </Alert>
-            )}
-            {mostrarAlertEdicao && (
-                <Alert variant="success">
-                    Fornecedor editado com sucesso!
-                </Alert>
-            )}
-            {alertFornecedorCadastrado && (
-                <Alert variant='warning'>
-                    Ops... fornecedor já cadastrado!
+                    {mensagem}
                 </Alert>
             )}
             <Form noValidate validated={formValidado} onSubmit={manipularSubmissao}>
@@ -141,7 +123,6 @@ export default function FormCadFornecedor(props) {
                     <Col>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="CNPJ:"
                                 className="mb-3"
                             >
@@ -156,11 +137,10 @@ export default function FormCadFornecedor(props) {
                     <Col>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Nome da Empresa:"
                                 className="mb-3"
                             >
-                                <Form.Control type="text" placeholder="Informe o nome da empresa" id="nome" name="nome" value={fornecedor.nome} onChange={manipularMudancas} required />
+                                <Form.Control type="text" placeholder="Informe o nome da empresa" id="nome" name="nome" value={fornecedor.nomeEmpresa} onChange={manipularMudancas} required />
                             </FloatingLabel>
                             <Form.Control.Feedback type="invalid">Informe o nome!</Form.Control.Feedback>
                         </Form.Group>
@@ -170,7 +150,6 @@ export default function FormCadFornecedor(props) {
                     <Col md={10}>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Endereço:"
                                 className="mb-3"
                             >
@@ -182,7 +161,6 @@ export default function FormCadFornecedor(props) {
                     <Col md={2}>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Número"
                                 className="mb-3"
                             >
@@ -196,7 +174,6 @@ export default function FormCadFornecedor(props) {
                     <Col md={5}>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Cidade"
                                 className="mb-3"
                             >
@@ -209,7 +186,6 @@ export default function FormCadFornecedor(props) {
                     <Col md={4}>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="CEP:"
                                 className="mb-3"
                             >

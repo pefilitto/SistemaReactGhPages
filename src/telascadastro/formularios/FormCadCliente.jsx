@@ -4,12 +4,12 @@ import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { useSelector, useDispatch } from "react-redux";
-import { editar, inserir } from '../../redux/clienteSlicer'
+import { alterarCliente, gravarCliente } from '../../redux/clienteSlicer';
 
 export default function FormCadCliente(props) {
     //Os atributos desse objeto devem estar associados aos atributos do formulario
     const {
-        estado,
+        conteudo,
         modoEdicao,
         setModoEdicao,
         clienteParaEdicao,
@@ -19,13 +19,10 @@ export default function FormCadCliente(props) {
     const [formValidado, setFormValidado] = useState(false);
     const estadoInicialCliente = clienteParaEdicao;
     const [cliente, setCliente] = useState(estadoInicialCliente);
-    const [mostrarAlertSucesso, setMostrarAlertSucesso] = useState(false);
-    const [mostrarAlertErro, setMostrarAlertErro] = useState(false);
-    const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
-    const [alertClienteCadastrado, setAlertClienteCadastrado] = useState(false);
+    const [mostrarAlert, setMostrarAlert] = useState(false);
     //const [listaLocalStorage, setListaLocalStorage] = useState([])
-    const {status, mensagem, listaClientes} = useSelector((state) => state.cliente)
-    
+    const { estado, mensagem } = useSelector((state) => state.cliente)
+
     const dispatch = useDispatch();
 
     const clienteVazio = {
@@ -62,6 +59,22 @@ export default function FormCadCliente(props) {
         return listaClientes.find((element) => element.cpf === cpf) !== undefined;
     }
 
+    function verificaEstado(estado){
+        while(estado == 2){
+            setMostrarAlert(true)    
+        }
+        setTimeout(() => setMostrarAlert(false), 2000)
+
+        if(estado == 1){
+            setMostrarAlert(true)
+            setTimeout(() => setMostrarAlert(false), 2000)
+        }
+        else{
+            setMostrarAlert(true)
+            setTimeout(() => setMostrarAlert(false), 2000)
+        }
+    }
+
 
     function manipularSubmissao(e) {
         const form = e.currentTarget;
@@ -82,21 +95,12 @@ export default function FormCadCliente(props) {
                 //mandar os dados para o backend
                 //limpar os dados do formulario
                 if (!modoEdicao) {
-                    if (!buscaCliente(listaClientes, cpf)) {
-                        dispatch(inserir(clientePreenchido))
-                        setMostrarAlertSucesso(true)
-                        setTimeout(() => setMostrarAlertSucesso(false), 2000)
-                    }
-                    else {
-                        setAlertClienteCadastrado(true);
-                        setCliente(clienteVazio);
-                        setTimeout(() => setAlertClienteCadastrado(false), 2000)
-                    }
+                    dispatch(gravarCliente(clientePreenchido))
+                    verificaEstado(estado)
                 }
                 else {
-                    dispatch(editar(cliente));
-                    setMostrarAlertEdicao(true);
-                    setTimeout(() => setMostrarAlertEdicao(false), 2000)
+                    dispatch(alterarCliente(cliente));
+                    verificaEstado(estado)
                     setModoEdicao(false);
                     setClienteParaEdicao(clienteVazio);
                 }
@@ -108,9 +112,9 @@ export default function FormCadCliente(props) {
             }
         }
         else {
-            setMostrarAlertErro(true);
+            setMostrarAlert(true);
             setCliente(clienteVazio);
-            setTimeout(() => setMostrarAlertErro(false), 2000)
+            setTimeout(() => setMostrarAlert(false), 2000)
         }
         e.stopPropagation();
         e.preventDefault();
@@ -127,24 +131,9 @@ export default function FormCadCliente(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>CADASTRO DE CLIENTE</h1>
-            {mostrarAlertSucesso && (
+            {mostrarAlert && (
                 <Alert variant="success">
-                    Cliente cadastrado com sucesso!
-                </Alert>
-            )}
-            {mostrarAlertErro && (
-                <Alert variant="danger">
-                    Erro: Preencha todos os campos!
-                </Alert>
-            )}
-            {mostrarAlertEdicao && (
-                <Alert variant="success">
-                    Cliente editado com sucesso!
-                </Alert>
-            )}
-            {alertClienteCadastrado && (
-                <Alert variant='warning'>
-                    Ops... cliente já cadastrado!
+                    {mensagem}
                 </Alert>
             )}
             <Form noValidate validated={formValidado} onSubmit={manipularSubmissao}>
@@ -152,7 +141,6 @@ export default function FormCadCliente(props) {
                     <Col>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="CPF:"
                                 className="mb-3"
                             >
@@ -174,7 +162,6 @@ export default function FormCadCliente(props) {
                     <Col>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Nome Completo:"
                                 className="mb-3"
                             >
@@ -194,7 +181,6 @@ export default function FormCadCliente(props) {
                     <Col md={10}>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Endereço:"
                                 className="mb-3"
                             >
@@ -213,7 +199,6 @@ export default function FormCadCliente(props) {
                     <Col md={2}>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Número"
                                 className="mb-3"
                             >
@@ -234,7 +219,6 @@ export default function FormCadCliente(props) {
                     <Col md={4}>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Bairro:"
                                 className="mb-3"
                             >
@@ -253,7 +237,6 @@ export default function FormCadCliente(props) {
                     <Col md={5}>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Cidade"
                                 className="mb-3"
                             >
@@ -313,7 +296,6 @@ export default function FormCadCliente(props) {
                     <Col md={4}>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="CEP:"
                                 className="mb-3"
                             >
@@ -332,7 +314,7 @@ export default function FormCadCliente(props) {
                 </Row>
                 <Row>
                     <Button style={{ marginLeft: "1%", width: "10%", marginRight: "10px" }} type="submit" variant={"success"} id='botaoConfirmar'>Cadastrar</Button>
-                    <Button style={{ width: "10%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => estado(false)}>Cadastrados</Button>
+                    <Button style={{ width: "10%", marginRight: "10px" }} type="button" variant={"secondary"} onClick={() => conteudo(false)}>Cadastrados</Button>
                 </Row>
             </Form>
         </Container>

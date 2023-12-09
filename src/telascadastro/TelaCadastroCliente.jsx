@@ -13,7 +13,7 @@ export default function TelaCadastroCliente() {
         <Container>
             {exibirFormulario ? (
                 <FormCadCliente
-                    estado={setExibirFormulario}
+                    conteudo={setExibirFormulario}
                     modoEdicao={modoEdicao}
                     setModoEdicao={setModoEdicao}
                     clienteParaEdicao={clienteParaEdicao}
@@ -21,7 +21,7 @@ export default function TelaCadastroCliente() {
                 />
             ) : (
                 <TabelaClientes
-                    estado={setExibirFormulario}
+                    conteudo={setExibirFormulario}
                     setModoEdicao={setModoEdicao}
                     setClienteParaEdicao={setClienteParaEdicao}
                 />

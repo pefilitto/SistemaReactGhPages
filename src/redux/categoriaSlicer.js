@@ -12,6 +12,7 @@ export const buscarCategorias = createAsyncThunk("categoria/buscarCategorias", a
             return {
                 status: dados.status,
                 listaCategorias: dados.categoria,
+                codigo: dados.categoria.codigo
             }
         }
         else {
@@ -29,6 +30,63 @@ export const buscarCategorias = createAsyncThunk("categoria/buscarCategorias", a
         }
     }
 });
+
+export const excluirCategoria = createAsyncThunk("categoria/excluirCategoria", async (categoria) => {
+    try {
+        const resposta = await fetch(`${urlBase}/${categoria.codigo}`, {
+            method: "DELETE",
+        });
+
+        if (resposta.ok) {
+            const dados = await resposta.json();
+            return {
+                status: dados.status,
+                mensagem: dados.mensagem
+            };
+        } 
+        else {
+            return {
+                status: false,
+                mensagem: "Não foi possível excluir do banco de dados"
+            };
+        }
+    } catch (error) {
+        return {
+            status: false,
+            mensagem: "Erro ao excluir do banco de dados: " + error.message
+        };
+    }
+});
+
+export const alterarCategoria = createAsyncThunk("categoria/alterarCategoria", async (categoria) => {
+    const resposta = await fetch(`${urlBase}/${categoria.codigo}`, {
+        method: "PATCH", 
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(categoria)
+    }).catch(e => {
+        return {
+            status: false,
+            mensagem: "Erro ao atualizar categoria: " + e.message
+        }
+    })
+
+    if(resposta.ok){
+        const dados = await resposta.json();
+        return {
+            status: dados.status,
+            mensagem: dados.mensagem
+        }
+    }
+    else{
+        return {
+            status: false,
+            mensagem: "Erro ao atualizar categoria"
+        }
+    }
+})
+
 
 export const gravarCategoria = createAsyncThunk("categoria/gravarCategoria", async (categoria) => {
     const resposta = await fetch(urlBase, {
@@ -106,14 +164,43 @@ const categoriaSlicer = createSlice({
                     state.listaCategorias = action.payload.listaCategorias
                 }
                 else {
-                    state.estado = ESTADO.ERRO;
+                    state.estado = ESTADO.Erro;
                     state.mensagem = action.payload.mensagem;
                 }
             })
             .addCase(buscarCategorias.rejected, (state, action) => {
-                state.estado = ESTADO.ERRO;
+                state.estado = ESTADO.Erro;
                 state.mensagem = action.error.message;
             })
+
+            .addCase(excluirCategoria.pending, (state, action) => {
+                state.estado = ESTADO.Pendente,
+                state.mensagem = "Excluindo categoria..."
+            })
+            .addCase(excluirCategoria.fulfilled, (state, action) => {
+                state.estado = ESTADO.Ocioso,
+                state.mensagem = action.payload.mensagem,
+                state.listaCategorias = state.listaCategorias.filter(categoria => categoria.codigo !== action.payload.codigo);
+            })
+            .addCase(excluirCategoria.rejected, (state, action) => {
+                state.estado = ESTADO.Erro,
+                state.mensagem = action.error.message
+            })
+
+            .addCase(alterarCategoria.pending, (state) => {
+                state.estado = ESTADO.Pendente;
+                state.mensagem = 'Alterando categoria...';
+              })
+              .addCase(alterarCategoria.fulfilled, (state, action) => {
+                state.estado = ESTADO.Ocioso;
+                const index = state.listaCategorias.findIndex(categoria => categoria.tipoProduto === action.payload.tipoProduto && categoria.tamanho === action.payload.tamanho)
+                state.listaCategorias[index] = action.payload.categoria
+                state.mensagem = action.payload.mensagem;
+              })
+              .addCase(alterarCategoria.rejected, (state, action) => {
+                state.estado = ESTADO.Erro;
+                state.mensagem = action.error.message;
+              });
     }
 })
 

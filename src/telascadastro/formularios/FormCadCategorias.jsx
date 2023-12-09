@@ -3,7 +3,7 @@ import Menu from '../../templates/menu'
 import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { gravarCategoria } from '../../redux/categoriaSlicer'
+import { alterarCategoria, gravarCategoria } from '../../redux/categoriaSlicer'
 import ESTADO from '../../recursos/estado';
 
 export default function FormCadCategoria(props) {
@@ -18,10 +18,8 @@ export default function FormCadCategoria(props) {
     const [formValidado, setFormValidado] = useState(false);
     const estadoCategoriaInicial = categoriaParaEdicao;
     const [categoria, setCategoria] = useState(estadoCategoriaInicial);
-    const [mostrarAlertSucesso, setMostrarAlertSucesso] = useState(false);
-    const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
-    const [alertCategoriaCadastrada, setAlertCategoriaCadastrada] = useState(false);
-    const { estado, mensagem } = useSelector((state) => state.categoria);
+    const [mostrarAlert, setMostrarAlert] = useState(false);
+    const { estado, mensagem } = useSelector(state => state.categoria);
     const dispatch = useDispatch();
 
     const categoriaVazia = {
@@ -29,8 +27,9 @@ export default function FormCadCategoria(props) {
         tamanho: ''
     }
 
-    function insereCategoria(tipo, tamanho) {
+    function insereCategoria(codigo, tipo, tamanho) {
         const novaCategoria = {
+            codigo: codigo,
             tipoProduto: tipo,
             tamanho: tamanho
         }
@@ -42,33 +41,41 @@ export default function FormCadCategoria(props) {
         setCategoria({ ...categoria, [componente.name]: componente.value })
     }
 
+    function verificaEstado(estado){
+        while(estado == 2){
+            setMostrarAlert(true)    
+        }
+        setTimeout(() => setMostrarAlert(false), 2000)
+
+        if(estado == 1){
+            setMostrarAlert(true)
+            setTimeout(() => setMostrarAlert(false), 2000)
+        }
+        else{
+            setMostrarAlert(true)
+            setTimeout(() => setMostrarAlert(false), 2000)
+        }
+    }
+
     async function manipularSubmissao(e) {
         const form = e.currentTarget;
 
+        const codigo = estadoCategoriaInicial.codigo;
         const tipo = document.querySelector('#tipoProduto').value;
         const tamanho = document.querySelector('#tamanho').value;
 
-        const categoria = insereCategoria(tipo, tamanho);
+        const categoria = insereCategoria(codigo, tipo, tamanho);
 
         if (form.checkValidity()) {
             if (!modoEdicao) {
                 setModoEdicao(false);
                 dispatch(gravarCategoria(categoria));
-                if(estado === ESTADO.Erro){
-                    setAlertCategoriaCadastrada(true);
-                    setTimeout(() => setAlertCategoriaCadastrada(false), 2000);
-                }
-                else{
-                    setMostrarAlertSucesso(true);
-                    setTimeout(() => setMostrarAlertSucesso(false), 2000);
-                }
-                
+                verificaEstado(estado)
             }
             else {
-                dispatch(editar(categoria));
+                dispatch(alterarCategoria(categoria));
+                verificaEstado(estado)
                 setModoEdicao(false);
-                setMostrarAlertEdicao(true);
-                setTimeout(() => setMostrarAlertEdicao(false), 2000);
             }
         }
         else {
@@ -90,19 +97,9 @@ export default function FormCadCategoria(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>CADASTRO DE CATEGORIAS</h1>
-            {mostrarAlertSucesso && (
+            {mostrarAlert && (
                 <Alert variant="success">
-                    Categoria cadastrada com sucesso!
-                </Alert>
-            )}
-            {mostrarAlertEdicao && (
-                <Alert variant="success">
-                    Categoria editada com sucesso!
-                </Alert>
-            )}
-            {alertCategoriaCadastrada && (
-                <Alert variant='warning'>
-                    Ops... categoria já cadastrada!
+                    {mensagem}
                 </Alert>
             )}
             <Form noValidate validated={formValidado} onSubmit={manipularSubmissao}>

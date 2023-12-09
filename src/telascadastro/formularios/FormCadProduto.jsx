@@ -4,7 +4,8 @@ import Cabecalho from "../../templates/cabecalho";
 import { useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { editar, inserir } from '../../redux/produtoSlicer'
+import { alterarProduto, gravarProdutos } from '../../redux/produtoSlicer';
+import { buscarCategorias } from '../../redux/categoriaSlicer';
 
 export default function FormCadProdutos(props) {
     const {
@@ -17,12 +18,11 @@ export default function FormCadProdutos(props) {
     const [formValidado, setFormValidado] = useState(false);
     const estadoInicialProduto = produtoParaEdicao;
     const [produto, setProduto] = useState(estadoInicialProduto);
-    const [mostrarAlertSucesso, setMostrarAlertSucesso] = useState(false);
-    const [mostrarAlertErro, setMostrarAlertErro] = useState(false);
-    const [mostrarAlertEdicao, setMostrarAlertEdicao] = useState(false);
-    const [alertProdutoCadastrado, setAlertProdutoCadastrado] = useState(false);
+    const [mostrarAlert, setMostrarAlert] = useState(false);
     const dispatch = useDispatch();
-    const {status, mensagem, listaProdutos} = useSelector((state) => state.produto)
+    const { estado, mensagem } = useSelector((state) => state.produto)
+    const { listaCategorias } = useSelector((state) => state.categoria)
+    dispatch(buscarCategorias());
 
     const produtoVazio = {
         nome: '',
@@ -37,8 +37,9 @@ export default function FormCadProdutos(props) {
         setProduto({ ...produto, [componente.name]: componente.value })
     }
 
-    function criaProduto(nome, preco, qtdEstoque, categoria, descricao) {
+    function criaProduto(codigo, nome, preco, qtdEstoque, categoria, descricao) {
         const produtoInserido = {
+            codigo: codigo,
             nome: nome,
             preco: preco,
             qtdEstoque: qtdEstoque,
@@ -48,45 +49,48 @@ export default function FormCadProdutos(props) {
         return produtoInserido;
     }
 
-    function buscaProduto(listaProdutos, nome) {
-        return listaProdutos.find((element) => element.nome === nome) !== undefined;
-    }
-
     function manipularMudancas(e) {
         const componente = e.currentTarget;
         setProduto({ ...produto, [componente.name]: componente.value })
     }
 
+    function verificaEstado(estado){
+        while(estado == 2){
+            setMostrarAlert(true)    
+        }
+        setTimeout(() => setMostrarAlert(false), 2000)
+
+        if(estado == 1){
+            setMostrarAlert(true)
+            setTimeout(() => setMostrarAlert(false), 2000)
+        }
+        else{
+            setMostrarAlert(true)
+            setTimeout(() => setMostrarAlert(false), 2000)
+        }
+    }
+
     function manipularSubmissao(e) {
         const form = e.currentTarget;
 
+        const codigo = estadoInicialProduto.codigo
         const nome = document.getElementById('nome').value;
         const preco = document.getElementById('preco').value;
         const qtdEstoque = document.getElementById('qtdEstoque').value;
-        const categoria = document.getElementById('categoria').value;
+        const categoria = document.querySelector("#categoria").value
         const descricao = document.getElementById('descricao').value;
 
         if (nome && preco && qtdEstoque && categoria && descricao) {
-            const produto = criaProduto(nome, preco, qtdEstoque, categoria, descricao);
-
+            const produto = criaProduto(codigo, nome, preco, qtdEstoque, categoria, descricao);
 
             if (form.checkValidity()) {
                 if (!modoEdicao) {
-                    if (!buscaProduto(listaProdutos, nome)) {
-                        dispatch(inserir(produto))
-                        setMostrarAlertSucesso(true)
-                        setTimeout(() => setMostrarAlertSucesso(false), 2000)
-                    }
-                    else {
-                        setAlertProdutoCadastrado(true);
-                        setProduto(produtoVazio);
-                        setTimeout(() => setAlertProdutoCadastrado(false), 2000)
-                    }
+                    dispatch(gravarProdutos(produto));
+                    verificaEstado(estado);
                 }
                 else {
-                    dispatch(editar(produto))
-                    setMostrarAlertEdicao(true);
-                    setTimeout(() => setMostrarAlertEdicao(false), 2000)
+                    dispatch(alterarProduto(produto));
+                    verificaEstado(estado);
                     setModoEdicao(false);
                     setProdutoParaEdicao(produtoVazio)
                 }
@@ -98,8 +102,7 @@ export default function FormCadProdutos(props) {
             }
         }
         else {
-            setMostrarAlertErro(true);
-            setTimeout(() => setMostrarAlertErro(false), 2000)
+            verificaEstado(estado);
         }
         e.stopPropagation();
         e.preventDefault();
@@ -115,24 +118,9 @@ export default function FormCadProdutos(props) {
                 marginBottom: "20px",
                 marginTop: "20px",
             }}>CADASTRO DE PRODUTOS</h1>
-            {mostrarAlertSucesso && (
+            {mostrarAlert && (
                 <Alert variant="success">
-                    Produto cadastrado com sucesso!
-                </Alert>
-            )}
-            {mostrarAlertErro && (
-                <Alert variant="danger">
-                    Erro: Preencha todos os campos!
-                </Alert>
-            )}
-            {mostrarAlertEdicao && (
-                <Alert variant="success">
-                    Produto editado com sucesso!
-                </Alert>
-            )}
-            {alertProdutoCadastrado && (
-                <Alert variant='warning'>
-                    Ops... produto já cadastrado!
+                    {mensagem}
                 </Alert>
             )}
             <Form noValidate validated={formValidado} onSubmit={manipularSubmissao}>
@@ -140,7 +128,6 @@ export default function FormCadProdutos(props) {
                     <Col>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Nome do Produto:"
                                 className="mb-3"
                             >
@@ -155,7 +142,6 @@ export default function FormCadProdutos(props) {
                     <Col>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Preço:"
                                 className="mb-3"
                             >
@@ -169,7 +155,6 @@ export default function FormCadProdutos(props) {
                     <Col>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Estoque:"
                                 className="mb-3"
                             >
@@ -181,11 +166,17 @@ export default function FormCadProdutos(props) {
                     <Col md={10}>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Categoria"
                                 className="mb-3"
                             >
-                                <Form.Control type="text" placeholder="Nº" id="categoria" name="categoria" value={produto.categoria} onChange={manipularMudancas} />
+                                <Form.Select id="categoria" name="categoria" value={produto.categoria} onChange={manipularMudancas}>
+                                    <option value="">Selecione a categoria</option>
+                                    {listaCategorias.map((categoria) => (
+                                        <option key={categoria.codigo} value={categoria.codigo}>
+                                            {categoria.tipoProduto + " " + categoria.tamanho}
+                                        </option>
+                                    ))}
+                                </Form.Select>
                             </FloatingLabel>
                             <Form.Control.Feedback type="invalid">Informe a categoria!</Form.Control.Feedback>
                         </Form.Group>
@@ -195,7 +186,6 @@ export default function FormCadProdutos(props) {
                     <Col md={15}>
                         <Form.Group>
                             <FloatingLabel
-                                controlId="floatingInput"
                                 label="Descrição: "
                                 className="mb-3"
                             >
